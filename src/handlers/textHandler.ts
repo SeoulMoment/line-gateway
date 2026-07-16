@@ -1,5 +1,9 @@
 import { LineService } from "../services/line";
 
+import { greetingCommand } from "../commands/greeting";
+import { unknownCommand } from "../commands/unknown";
+import { brandCommand } from "../commands/brand";
+
 export async function textHandler(
   event: any,
   line: LineService
@@ -9,16 +13,24 @@ export async function textHandler(
   switch (userMessage) {
     case "안녕":
     case "안녕하세요":
-      await line.reply(
+      await greetingCommand(
         event.replyToken,
-        "👋 안녕하세요!\n\n서울모먼트입니다.\n 오늘도 너무 고생많았어요."
+        line
+      );
+      break;
+
+    case "品牌館":
+      await brandCommand(
+        event.replyToken,
+        line
       );
       break;
 
     default:
-      await line.reply(
+      await unknownCommand(
         event.replyToken,
-        "죄송합니다.\n아직 지원하지 않는 명령입니다."
+        line
       );
+      break;
   }
 }

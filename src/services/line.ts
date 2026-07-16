@@ -1,9 +1,12 @@
-export class LineService {
-  constructor(
-    private readonly accessToken: string
-  ) {}
+import { LineMessage } from "../types/message";
 
-  async reply(replyToken: string, message: string) {
+export class LineService {
+  constructor(private readonly accessToken: string) {}
+
+  async reply(
+    replyToken: string,
+    messages: LineMessage[]
+  ): Promise<Response> {
     return fetch(
       "https://api.line.me/v2/bot/message/reply",
       {
@@ -14,12 +17,7 @@ export class LineService {
         },
         body: JSON.stringify({
           replyToken,
-          messages: [
-            {
-              type: "text",
-              text: message,
-            },
-          ],
+          messages,
         }),
       }
     );
