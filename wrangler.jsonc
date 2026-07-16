@@ -3,6 +3,9 @@
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
 {
+  "vars": {
+    "APP_NAME": "Seoul Moment",
+  },
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "line-gateway",
   "main": "src/index.ts",
