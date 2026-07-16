@@ -11,7 +11,7 @@ export async function textHandler(
     case "안녕하세요":
       await line.reply(
         event.replyToken,
-        "👋 안녕하세요!\n\n서울모먼트입니다.\n무엇을 도와드릴까요?"
+        "👋 안녕하세요!\n\n서울모먼트입니다.\n 오늘도 너무 고생많았어요."
       );
       break;
 
