@@ -9,8 +9,6 @@ export interface FlexMessage {
   contents: Record<string, unknown>;
 }
 
-export type LineMessage =
-  | TextMessage
-  | FlexMessage;
+export type LineMessage = TextMessage | FlexMessage;
 
 export type LineMessages = LineMessage[];

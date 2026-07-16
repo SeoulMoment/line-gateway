@@ -5,10 +5,6 @@ import { webhookController } from "../controllers/webhookController";
 
 const webhook = new Hono();
 
-webhook.post(
-    "/webhook",
-    verifySignature,
-    webhookController
-);
+webhook.post("/webhook", verifySignature, webhookController);
 
 export default webhook;

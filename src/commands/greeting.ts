@@ -1,9 +1,6 @@
 import { LineService } from "../services/line";
 
-export async function greetingCommand(
-  replyToken: string,
-  line: LineService
-) {
+export async function greetingCommand(replyToken: string, line: LineService) {
   await line.reply(replyToken, [
     {
       type: "text",
