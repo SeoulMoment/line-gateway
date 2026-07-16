@@ -5,7 +5,9 @@ const webhook = new Hono();
 webhook.post("/webhook", async (c) => {
   const body = await c.req.json();
 
-  console.log(body);
+  console.log(
+    JSON.stringify(body, null, 2)
+  );
 
   return c.text("OK");
 });
