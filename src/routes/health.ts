@@ -1,13 +1,14 @@
 import { Hono } from "hono";
 
-const Health = new Hono();
+const health = new Hono();
 
-Health.get("/", (c) => {
+health.get("/", (c) => {
   return c.json({
     status: "ok",
     service: "Seoul Moment LINE Gateway",
     version: "1.0.0",
+    timestamp: new Date().toISOString(),
   });
 });
 
-export default Health;
+export default health;
