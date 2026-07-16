@@ -1,11 +1,10 @@
 export class LineService {
   constructor(
-    private accessToken: string,
-    private channelSecret: string
+    private readonly accessToken: string
   ) {}
 
-  async reply(replyToken: string, messages: any[]) {
-    const response = await fetch(
+  async reply(replyToken: string, message: string) {
+    return fetch(
       "https://api.line.me/v2/bot/message/reply",
       {
         method: "POST",
@@ -15,11 +14,14 @@ export class LineService {
         },
         body: JSON.stringify({
           replyToken,
-          messages,
+          messages: [
+            {
+              type: "text",
+              text: message,
+            },
+          ],
         }),
       }
     );
-
-    return response;
   }
 }

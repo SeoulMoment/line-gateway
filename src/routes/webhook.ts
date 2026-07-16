@@ -1,22 +1,27 @@
-import { Hono } from "hono";
+export class LineService {
+  constructor(
+    private readonly accessToken: string
+  ) {}
 
-import { verifySignature } from "../middleware/verifySignature";
-
-const webhook = new Hono();
-
-webhook.post(
-  "/webhook",
-  verifySignature,
-  async (c) => {
-
-    const body = await c.req.json();
-
-    console.log(
-      JSON.stringify(body, null, 2)
+  async reply(replyToken: string, message: string) {
+    return fetch(
+      "https://api.line.me/v2/bot/message/reply",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          replyToken,
+          messages: [
+            {
+              type: "text",
+              text: message,
+            },
+          ],
+        }),
+      }
     );
-
-    return c.text("OK");
   }
-);
-
-export default webhook;
+}
