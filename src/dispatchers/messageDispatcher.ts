@@ -1,21 +1,28 @@
-export async function dispatchMessage(event: any) {
+import { LineService } from "../services/line";
+import { textHandler } from "../handlers/textHandler";
 
-    switch (event.type) {
+export async function dispatchMessage(
+  event: any,
+  line: LineService
+) {
 
-        case "message":
-            console.log("Message Event");
-            break;
+  switch (event.type) {
 
-        case "follow":
-            console.log("Follow Event");
-            break;
+    case "message":
 
-        case "postback":
-            console.log("Postback Event");
-            break;
+      if (event.message.type === "text") {
+        await textHandler(event, line);
+      }
 
-        default:
-            console.log("Unknown Event");
-    }
+      break;
+
+    case "follow":
+      console.log("Follow");
+      break;
+
+    case "postback":
+      console.log("Postback");
+      break;
+  }
 
 }
