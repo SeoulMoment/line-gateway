@@ -1,7 +1,7 @@
 import { Context } from "hono";
 
-import { LineService } from "../services/line";
 import { dispatchMessage } from "../dispatchers/messageDispatcher";
+import { LineService } from "../services/line";
 
 export async function webhookController(c: Context) {
   const body = await c.req.json();

@@ -1,13 +1,14 @@
-import { LineService } from "../services/line";
 import { textHandler } from "../handlers/textHandler";
+import { LineService } from "../services/line";
+import { MessageEvent, WebhookEvent } from "../types/webhook";
 
-export async function dispatchMessage(event: any, line: LineService) {
+export async function dispatchMessage(
+  event: WebhookEvent,
+  line: LineService,
+): Promise<void> {
   switch (event.type) {
     case "message":
-      if (event.message.type === "text") {
-        await textHandler(event, line);
-      }
-
+      await textHandler(event as MessageEvent, line);
       break;
 
     case "follow":

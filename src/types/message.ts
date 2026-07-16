@@ -10,5 +10,3 @@ export interface FlexMessage {
 }
 
 export type LineMessage = TextMessage | FlexMessage;
-
-export type LineMessages = LineMessage[];

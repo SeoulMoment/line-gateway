@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 
-import { verifySignature } from "../middleware/verifySignature";
 import { webhookController } from "../controllers/webhookController";
+import { verifySignature } from "../middleware/verifySignature";
 
 const webhook = new Hono();
 

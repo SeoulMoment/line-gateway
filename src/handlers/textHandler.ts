@@ -1,10 +1,13 @@
-import { LineService } from "../services/line";
-
+import { brandCommand } from "../commands/brand";
 import { greetingCommand } from "../commands/greeting";
 import { unknownCommand } from "../commands/unknown";
-import { brandCommand } from "../commands/brand";
+import { LineService } from "../services/line";
+import { MessageEvent } from "../types/webhook";
 
-export async function textHandler(event: any, line: LineService) {
+export async function textHandler(
+  event: MessageEvent,
+  line: LineService,
+): Promise<void> {
   const userMessage = event.message.text.trim();
 
   switch (userMessage) {
