@@ -1,9 +1,11 @@
 import { Hono } from "hono";
 
+import health from "./routes/health";
+import webhook from "./routes/webhook";
+
 const app = new Hono();
 
-app.get("/", (c) => {
-  return c.text("Seoul Moment LINE Gateway");
-});
+app.route("/", health);
+app.route("/", webhook);
 
 export default app;
