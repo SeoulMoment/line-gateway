@@ -1,12 +1,12 @@
-import { LineService } from "../services/line";
+import { CommandContext } from "../context/commandContext";
 
-export async function unknownCommand(replyToken: string, line: LineService) {
+export async function unknownCommand(context: CommandContext): Promise<void> {
+  const { line, replyToken } = context;
+
   await line.reply(replyToken, [
     {
       type: "text",
-      text: `죄송합니다.
-
-아직 준비되지 않은 기능입니다.`,
+      text: "죄송합니다. 아직 지원하지 않는 기능입니다.",
     },
   ]);
 }

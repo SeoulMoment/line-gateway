@@ -1,6 +1,8 @@
 import { createBrandMenuFlex } from "../builders/flex";
-import { LineService } from "../services/line";
+import { CommandContext } from "../context/commandContext";
 
-export async function brandCommand(replyToken: string, line: LineService) {
+export async function brandCommand(context: CommandContext): Promise<void> {
+  const { line, replyToken } = context;
+
   await line.reply(replyToken, [createBrandMenuFlex()]);
 }

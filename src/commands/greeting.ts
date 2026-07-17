@@ -1,6 +1,8 @@
-import { LineService } from "../services/line";
+import { CommandContext } from "../context/commandContext";
 
-export async function greetingCommand(replyToken: string, line: LineService) {
+export async function greetingCommand(context: CommandContext): Promise<void> {
+  const { line, replyToken } = context;
+
   await line.reply(replyToken, [
     {
       type: "text",

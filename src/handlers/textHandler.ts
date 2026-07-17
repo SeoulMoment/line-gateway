@@ -1,13 +1,17 @@
-import { LineService } from "../services/line";
-import { MessageEvent } from "../types/webhook";
-
+import { CommandContext } from "../context/commandContext";
 import { routeCommand } from "../router/commandRouter";
+import { LineService } from "../services/line";
+import type { MessageEvent } from "../types/webhook";
 
 export async function textHandler(
   event: MessageEvent,
   line: LineService,
 ): Promise<void> {
-  const userMessage = event.message.text.trim();
+  const context: CommandContext = {
+    event,
+    replyToken: event.replyToken,
+    line,
+  };
 
-  await routeCommand(userMessage, event.replyToken, line);
+  await routeCommand(context);
 }

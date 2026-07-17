@@ -1,12 +1,10 @@
-import { COMMANDS } from "../constants/commands";
-
 import { brandCommand } from "../commands/brand";
 import { greetingCommand } from "../commands/greeting";
 import { unknownCommand } from "../commands/unknown";
+import { COMMANDS } from "../constants/commands";
+import { CommandContext } from "../context/commandContext";
 
-import { LineService } from "../services/line";
-
-type CommandHandler = (replyToken: string, line: LineService) => Promise<void>;
+type CommandHandler = (context: CommandContext) => Promise<void>;
 
 interface CommandDefinition {
   aliases: readonly string[];
@@ -23,20 +21,17 @@ const commandDefinitions: CommandDefinition[] = [
     handler: brandCommand,
   },
 ];
+export async function routeCommand(context: CommandContext): Promise<void> {
+  const message = context.event.message.text.trim();
 
-export async function routeCommand(
-  message: string,
-  replyToken: string,
-  line: LineService,
-): Promise<void> {
   const command = commandDefinitions.find((command) =>
     command.aliases.includes(message),
   );
 
   if (!command) {
-    await unknownCommand(replyToken, line);
+    await unknownCommand(context);
     return;
   }
 
-  await command.handler(replyToken, line);
+  await command.handler(context);
 }
