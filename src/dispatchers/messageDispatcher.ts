@@ -17,6 +17,7 @@ export async function dispatchMessage(
 
     case "postback":
       console.log("Postback");
+
       break;
   }
 }

@@ -10,7 +10,8 @@
     "lint:fix": "eslint src --fix",
     "format": "prettier --write src",
     "format:check": "prettier --check src",
-    "check": "npm run typecheck && npm run lint && npm run format:check"
+    "check": "npm run typecheck && npm run lint && npm run format:check",
+    "richmenu:create": "tsx --tsconfig tsconfig.scripts.json scripts/createRichMenu.ts"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.12.4",
@@ -21,6 +22,7 @@
     "eslint-plugin-simple-import-sort": "^13.0.0",
     "eslint-plugin-unused-imports": "^4.4.1",
     "prettier": "^3.9.5",
+    "tsx": "^4.23.1",
     "typescript": "^5.5.2",
     "typescript-eslint": "^8.64.0",
     "vitest": "~3.2.0",
@@ -28,6 +30,7 @@
   },
   "dependencies": {
     "@line/bot-sdk": "^11.2.0",
+    "dotenv": "^17.4.2",
     "hono": "^4.12.30"
   }
 }
