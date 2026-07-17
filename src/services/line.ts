@@ -1,6 +1,6 @@
 import { LINE_API, LINE_ENDPOINT } from "../config/line";
-import type { BotInfo } from "../types/line";
-import type { LineMessage } from "../types/message";
+import { BotInfo } from "../types/line/bot";
+import type { LineMessage } from "../types/line/message";
 
 export class LineService {
   constructor(private readonly accessToken: string) {}

@@ -1,6 +1,6 @@
 import { textHandler } from "../handlers/textHandler";
 import { LineService } from "../services/line";
-import { MessageEvent, WebhookEvent } from "../types/webhook";
+import { MessageEvent, WebhookEvent } from "../types/line/webhook";
 
 export async function dispatchMessage(
   event: WebhookEvent,

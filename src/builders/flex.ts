@@ -1,4 +1,4 @@
-import { FlexMessage } from "../types/message";
+import { FlexMessage } from "../types/line/message";
 
 export function createBrandMenuFlex(): FlexMessage {
   return {
