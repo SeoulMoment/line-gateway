@@ -1,6 +1,8 @@
 import { LINE_API, LINE_ENDPOINT } from "../config/line";
-import { BotInfo } from "../types/line/bot";
+
+import type { BotInfo } from "../types/line/bot";
 import type { LineMessage } from "../types/line/message";
+import type { RichMenuRequest, CreateRichMenuResponse } from "../types/line";
 
 export class LineService {
   constructor(private readonly accessToken: string) {}
@@ -43,14 +45,15 @@ export class LineService {
   async getBotInfo(): Promise<BotInfo> {
     return this.request<BotInfo>("GET", LINE_ENDPOINT.INFO);
   }
+  async createRichMenu(body: RichMenuRequest): Promise<CreateRichMenuResponse> {
+    return this.request<CreateRichMenuResponse>(
+      "POST",
+      LINE_ENDPOINT.RICHMENU,
+      body,
+    );
+  }
 
-  // Rich Menu 생성
-  // async createRichMenu(body: RichMenuRequest) {
-  //   return this.request("POST", LINE_ENDPOINT.RICHMENU, body);
-  // }
-
-  // Rich Menu 삭제
-  async deleteRichMenu(richMenuId: string) {
-    return this.request("DELETE", `${LINE_ENDPOINT.RICHMENU}/${richMenuId}`);
+  async deleteRichMenu(richMenuId: string): Promise<void> {
+    await this.request("DELETE", `${LINE_ENDPOINT.RICHMENU}/${richMenuId}`);
   }
 }
