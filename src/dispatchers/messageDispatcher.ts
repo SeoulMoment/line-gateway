@@ -1,4 +1,5 @@
 import { textHandler } from "../handlers/textHandler";
+import { postbackHandler } from "../handlers/postbackHandler";
 import { LineService } from "../services/line";
 import { MessageEvent, WebhookEvent } from "../types/line/webhook";
 
@@ -16,8 +17,7 @@ export async function dispatchMessage(
       break;
 
     case "postback":
-      console.log("Postback");
-
+      await postbackHandler(event, line);
       break;
   }
 }

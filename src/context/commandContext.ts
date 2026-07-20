@@ -1,8 +1,8 @@
 import { LineService } from "../services/line";
-import type { MessageEvent } from "../types/line/webhook";
+import type { WebhookEvent } from "../types/line/webhook";
 
 export interface CommandContext {
-  event: MessageEvent;
+  event: WebhookEvent;
   replyToken: string;
   line: LineService;
 }

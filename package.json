@@ -11,7 +11,9 @@
     "format": "prettier --write src",
     "format:check": "prettier --check src",
     "check": "npm run typecheck && npm run lint && npm run format:check",
-    "richmenu:create": "tsx --tsconfig tsconfig.scripts.json scripts/createRichMenu.ts"
+    "richmenu:create": "tsx --tsconfig tsconfig.scripts.json scripts/createRichMenu.ts",
+    "richmenu:upload": "tsx scripts/uploadRichMenuImage.ts",
+    "richmenu:set": "tsx scripts/setDefaultRichMenu.ts"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.12.4",

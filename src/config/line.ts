@@ -7,6 +7,7 @@ export interface LineConfig {
 
 export const LINE_API = {
   BASE_URL: "https://api.line.me/v2/bot",
+  DATA_BASE_URL: "https://api-data.line.me/v2/bot",
 } as const;
 
 export const LINE_ENDPOINT = {
