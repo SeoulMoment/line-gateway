@@ -1,5 +1,4 @@
-import { LineMessage } from "./message";
-
+import type { LineMessage } from "./message";
 export interface ReplyRequest {
   replyToken: string;
   messages: LineMessage[];

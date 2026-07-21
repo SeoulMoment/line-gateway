@@ -1,4 +1,4 @@
-import { createTextMessage } from "../builders/message/text";
+import { createNewArrivalMenuFlex } from "../builders/flex/newArrivalMenu";
 import { CommandContext } from "../context/commandContext";
 
 export async function newArrivalCommand(
@@ -6,7 +6,5 @@ export async function newArrivalCommand(
 ): Promise<void> {
   const { line, replyToken } = context;
 
-  await line.reply(replyToken, [
-    createTextMessage("🆕 新品專區準備中，敬請期待！"),
-  ]);
+  await line.reply(replyToken, [createNewArrivalMenuFlex()]);
 }

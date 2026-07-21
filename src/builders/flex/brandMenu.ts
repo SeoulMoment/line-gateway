@@ -16,18 +16,20 @@ export function createBrandMenuFlex(): FlexMessage {
       body: {
         type: "box",
         layout: "vertical",
+        spacing: "md",
         contents: [
           {
             type: "text",
-            text: "品牌館",
+            text: "🏷 品牌館",
             weight: "bold",
             size: "xl",
           },
           {
             type: "text",
-            text: "探索韓國品牌",
-            margin: "md",
+            text: "探索 Seoul Moment 精選韓國品牌。",
+            size: "sm",
             color: "#666666",
+            wrap: true,
           },
         ],
       },

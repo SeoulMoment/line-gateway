@@ -1,15 +1,23 @@
-import { brandCommand } from "../commands/brand";
 import { bestCommand } from "../commands/best";
+import { brandCommand } from "../commands/brand";
 import { deliveryCommand } from "../commands/delivery";
 import { newArrivalCommand } from "../commands/newArrival";
 import { orderCommand } from "../commands/order";
 import { supportCommand } from "../commands/support";
-import { PostbackContext } from "../context/postbackContext";
+import { CommandContext } from "../context/commandContext";
+import { LineService } from "../services/line";
+import { PostbackEvent } from "../types/line/webhook";
 
-export async function postbackRouter(context: PostbackContext): Promise<void> {
-  const action = context.event.postback.data;
+export async function postbackRouter(
+  event: PostbackEvent,
+  line: LineService,
+): Promise<void> {
+  const context: CommandContext = {
+    line,
+    replyToken: event.replyToken,
+  };
 
-  switch (action) {
+  switch (event.postback.data) {
     case "brand":
       await brandCommand(context);
       break;

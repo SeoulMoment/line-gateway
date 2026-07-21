@@ -1,8 +1,10 @@
 import { LINE_API, LINE_ENDPOINT } from "../config/line";
-
+import type {
+  CreateRichMenuResponse,
+  LineMessage,
+  RichMenuRequest,
+} from "../types/line";
 import type { BotInfo } from "../types/line/bot";
-import type { LineMessage } from "../types/line/message";
-import type { RichMenuRequest, CreateRichMenuResponse } from "../types/line";
 
 export class LineService {
   constructor(private readonly accessToken: string) {}
