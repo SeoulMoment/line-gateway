@@ -4,4 +4,5 @@ export interface Brand {
   description: string;
   imageUrl: string;
   url: string;
+  tags: string[];
 }
