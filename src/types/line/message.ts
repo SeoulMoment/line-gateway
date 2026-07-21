@@ -3,10 +3,14 @@ export interface TextMessage {
   text: string;
 }
 
-export interface FlexMessage {
-  type: "flex";
-  altText: string;
-  contents: Record<string, unknown>;
+export interface ImageMessage {
+  type: "image";
+  originalContentUrl: string;
+  previewImageUrl: string;
 }
 
-export type LineMessage = TextMessage | FlexMessage;
+export interface StickerMessage {
+  type: "sticker";
+  packageId: string;
+  stickerId: string;
+}

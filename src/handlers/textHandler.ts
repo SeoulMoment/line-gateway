@@ -8,10 +8,9 @@ export async function textHandler(
   line: LineService,
 ): Promise<void> {
   const context: CommandContext = {
-    event,
-    replyToken: event.replyToken,
     line,
+    replyToken: event.replyToken,
   };
 
-  await routeCommand(context);
+  await routeCommand(event, line);
 }
