@@ -1,7 +1,7 @@
 import { BRANDS } from "../../data/brands";
-import { createBrandBubble } from "../components/brandBubble";
-
 import type { FlexMessage } from "../../types/line";
+
+import { createBrandBubble } from "../components/brandBubble";
 
 export function createBrandMenuFlex(): FlexMessage {
   return {

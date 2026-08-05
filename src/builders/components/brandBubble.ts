@@ -1,4 +1,4 @@
-import { Brand } from "../../models/brand";
+import type { Brand } from "../../models/brand";
 
 export function createBrandBubble(brand: Brand): Record<string, unknown> {
   return {
@@ -50,7 +50,7 @@ export function createBrandBubble(brand: Brand): Record<string, unknown> {
           action: {
             type: "uri",
             label: "查看品牌",
-            data: `brand:${brand.id}`,
+            uri: brand.url,
           },
         },
       ],
