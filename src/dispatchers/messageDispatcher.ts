@@ -1,7 +1,11 @@
 import { postbackHandler } from "../handlers/postbackHandler";
 import { textHandler } from "../handlers/textHandler";
 import { LineService } from "../services/line";
-import { MessageEvent, WebhookEvent } from "../types/line/webhook";
+import {
+  MessageEvent,
+  PostbackEvent,
+  WebhookEvent,
+} from "../types/line/webhook";
 
 export async function dispatchMessage(
   event: WebhookEvent,
@@ -17,7 +21,7 @@ export async function dispatchMessage(
       break;
 
     case "postback":
-      await postbackHandler(event, line);
+      await postbackHandler(event as PostbackEvent, line);
       break;
   }
 }
