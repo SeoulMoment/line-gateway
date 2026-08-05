@@ -13,7 +13,7 @@ export function createDeliveryGuideFlex(): FlexMessage {
         type: "image",
         url: `${ASSET_BASE_URL}/menu/delivery.webp`,
         size: "full",
-        aspectRatio: "20:13",
+        aspectRatio: "20:8",
         aspectMode: "cover",
       },
 
