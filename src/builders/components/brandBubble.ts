@@ -50,7 +50,7 @@ export function createBrandBubble(brand: Brand): Record<string, unknown> {
           action: {
             type: "uri",
             label: "查看品牌",
-            uri: brand.url,
+            data: `brand:${brand.id}`,
           },
         },
       ],
