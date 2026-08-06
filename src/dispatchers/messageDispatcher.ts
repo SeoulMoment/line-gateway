@@ -1,6 +1,7 @@
 import { postbackHandler } from "../handlers/postbackHandler";
 import { textHandler } from "../handlers/textHandler";
 import { LineService } from "../services/line";
+import { EmailBinding } from "../types/email";
 import {
   MessageEvent,
   PostbackEvent,
@@ -11,6 +12,7 @@ export async function dispatchMessage(
   event: WebhookEvent,
   line: LineService,
   db: D1Database,
+  email: EmailBinding,
 ): Promise<void> {
   switch (event.type) {
     case "message":
@@ -22,7 +24,7 @@ export async function dispatchMessage(
       break;
 
     case "postback":
-      await postbackHandler(event as PostbackEvent, line, db);
+      await postbackHandler(event as PostbackEvent, line, db, email);
       break;
   }
 }

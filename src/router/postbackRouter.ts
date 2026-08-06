@@ -7,6 +7,7 @@ import { orderCommand } from "../commands/order";
 import { supportCommand } from "../commands/support";
 import type { CommandContext } from "../context/commandContext";
 import type { LineService } from "../services/line";
+import type { EmailBinding } from "../types/email";
 import type { PostbackEvent } from "../types/line/webhook";
 import { orderPostbackRouter } from "./orderPostbackRouter";
 
@@ -14,6 +15,7 @@ export async function postbackRouter(
   event: PostbackEvent,
   line: LineService,
   db: D1Database,
+  email: EmailBinding,
 ): Promise<void> {
   const data = event.postback.data;
 
@@ -29,8 +31,7 @@ export async function postbackRouter(
     return;
   }
 
-  // 주문 관련 Postback
-  const handled = await orderPostbackRouter(event, line, db);
+  const handled = await orderPostbackRouter(event, line, db, email);
 
   if (handled) {
     return;

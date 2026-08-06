@@ -1,12 +1,16 @@
 import { createTextMessage } from "../builders/message/text";
 import type { LineService } from "../services/line";
+import { OrderService } from "../services/order";
+import { OrderEmailService } from "../services/orderEmail";
 import { OrderSessionService } from "../services/orderSession";
+import { EmailBinding } from "../types/email";
 import type { PostbackEvent } from "../types/line/webhook";
 
 export async function orderPostbackRouter(
   event: PostbackEvent,
   line: LineService,
   db: D1Database,
+  email: EmailBinding,
 ): Promise<boolean> {
   const data = event.postback.data;
   const lineUserId = event.source.userId;
@@ -192,20 +196,39 @@ export async function orderPostbackRouter(
       if (session.step !== "confirmation") {
         await line.reply(event.replyToken, [
           createTextMessage(
-            "訂購資料尚未填寫完成。\n\n請完成所有訂購步驟後再送出。",
+            "訂購資料尚未填寫完成。\n\n" + "請完成所有訂購步驟後再送出。",
           ),
         ]);
 
         return true;
       }
 
-      // 현재는 테스트 단계.
-      // 다음 단계에서 orders 저장 + 주문번호 + 이메일 발송 연결.
+      const orderService = new OrderService(db);
+
+      const order = await orderService.createFromSession(session);
+
+      // 주문은 이미 DB에 저장됨.
+      // 이메일 실패가 주문 자체를 삭제시키면 안 됨.
+      try {
+        const orderEmail = new OrderEmailService(email);
+
+        await orderEmail.sendNewOrder(order);
+      } catch (error) {
+        console.error("Failed to send order notification email:", error);
+      }
+
+      // 정식 주문 저장 후 임시 세션 삭제
+      await orderSession.delete(lineUserId);
+
       await line.reply(event.replyToken, [
         createTextMessage(
-          "✅ 資料確認完成\n\n" +
-            "您的訂購資料已完成確認。\n" +
-            "請稍候 Seoul Moment 工作人員確認訂單。",
+          "✅ 訂單已成功送出\n\n" +
+            `您的訂單編號：\n${order.orderNumber}\n\n` +
+            "我們已收到您的訂購資料。\n\n" +
+            "Seoul Moment 工作人員確認商品、庫存及付款資訊後，" +
+            "將透過 LINE 與您聯絡。\n\n" +
+            "請保留您的訂單編號，以便後續查詢。\n\n" +
+            "感謝您的訂購 🤍",
         ),
       ]);
 

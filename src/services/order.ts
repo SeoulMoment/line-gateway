@@ -1,4 +1,4 @@
-import type { Order, OrderSession } from "../models/order";
+import type { Order, OrderSession, OrderStatus } from "../models/order";
 
 interface OrderRow {
   id: number;
@@ -13,28 +13,37 @@ interface OrderRow {
   phone: string;
   convenience_store: string;
   store_name: string;
-  status: Order["status"];
+  status: OrderStatus;
   created_at: string;
 }
 
 export class OrderService {
   constructor(private readonly db: D1Database) {}
 
-  private async generateOrderNumber(): Promise<string> {
-    const now = new Date();
-
-    const taiwanDate = new Intl.DateTimeFormat("en-CA", {
+  private getTaiwanDateCode(): string {
+    const parts = new Intl.DateTimeFormat("en-US", {
       timeZone: "Asia/Taipei",
       year: "2-digit",
       month: "2-digit",
       day: "2-digit",
-    })
-      .format(now)
-      .replaceAll("-", "");
+    }).formatToParts(new Date());
 
-    const prefix = `SM-${taiwanDate}-`;
+    const year = parts.find((part) => part.type === "year")?.value;
+    const month = parts.find((part) => part.type === "month")?.value;
+    const day = parts.find((part) => part.type === "day")?.value;
 
-    const result = await this.db
+    if (!year || !month || !day) {
+      throw new Error("Failed to generate Taiwan date.");
+    }
+
+    return `${year}${month}${day}`;
+  }
+
+  private async generateOrderNumber(): Promise<string> {
+    const dateCode = this.getTaiwanDateCode();
+    const prefix = `SM-${dateCode}-`;
+
+    const latestOrder = await this.db
       .prepare(
         `
         SELECT order_number
@@ -49,16 +58,17 @@ export class OrderService {
 
     let sequence = 1;
 
-    if (result) {
-      const parts = result.order_number.split("-");
-      const previousSequence = Number(parts[2]);
+    if (latestOrder) {
+      const previousSequence = Number(
+        latestOrder.order_number.split("-").at(-1),
+      );
 
       if (Number.isFinite(previousSequence)) {
         sequence = previousSequence + 1;
       }
     }
 
-    return `${prefix}${sequence.toString().padStart(4, "0")}`;
+    return `${prefix}${String(sequence).padStart(4, "0")}`;
   }
 
   async createFromSession(session: OrderSession): Promise<Order> {
@@ -74,7 +84,6 @@ export class OrderService {
       throw new Error("Order session is incomplete.");
     }
 
-    // UNIQUE 제약과 함께 재시도해서 동시 주문 충돌 방지
     for (let attempt = 0; attempt < 5; attempt += 1) {
       const orderNumber = await this.generateOrderNumber();
 
@@ -142,6 +151,6 @@ export class OrderService {
       }
     }
 
-    throw new Error("Failed to generate unique order number.");
+    throw new Error("Unable to create order.");
   }
 }

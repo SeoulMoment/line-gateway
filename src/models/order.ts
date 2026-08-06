@@ -14,8 +14,11 @@ export type OrderStep =
 export type OrderStatus =
   "pending" | "confirmed" | "preparing" | "shipped" | "completed" | "cancelled";
 
-export interface OrderForm {
-  platform?: OrderPlatform;
+export interface OrderSession {
+  lineUserId: string;
+  platform: OrderPlatform;
+  step: OrderStep;
+
   externalOrderId?: string;
   customerName?: string;
   productName?: string;
@@ -26,18 +29,14 @@ export interface OrderForm {
   storeName?: string;
 }
 
-export interface OrderSession extends OrderForm {
-  lineUserId: string;
-  platform: OrderPlatform;
-  step: OrderStep;
-}
-
 export interface Order {
   id: number;
   orderNumber: string;
   lineUserId: string;
   platform: OrderPlatform;
+
   externalOrderId?: string;
+
   customerName: string;
   productName: string;
   size: string;
@@ -45,6 +44,7 @@ export interface Order {
   phone: string;
   convenienceStore: string;
   storeName: string;
+
   status: OrderStatus;
   createdAt: string;
 }
