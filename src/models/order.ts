@@ -1,29 +1,17 @@
-export type OrderPlatform = "seoulmoment" | "shopee" | "other";
+export type OrderPlatform = "line" | "shopee";
 
 export interface OrderForm {
   platform?: OrderPlatform;
 
-  /**
-   * other 선택 시 실제 플랫폼 이름
-   */
-  platformName?: string;
-
-  /**
-   * Shopee / 기타 외부 플랫폼 주문번호
-   */
+  // Shopee에서 이미 주문한 경우
   externalOrderId?: string;
 
   customerName?: string;
-
   productName?: string;
-
   size?: string;
-
   color?: string;
-
   phone?: string;
 
   convenienceStore?: string;
-
   storeName?: string;
 }
