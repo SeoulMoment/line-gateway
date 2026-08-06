@@ -193,6 +193,27 @@ export async function orderPostbackRouter(
         return true;
       }
 
+      const orderService = new OrderService(db);
+      const order = await orderService.createFromSession(session);
+
+      try {
+        console.log("Sending order email:", order.orderNumber);
+
+        const result = await email.send({
+          to: "seoulmomenttw@gmail.com",
+          from: {
+            email: "order@seoulmoment.com.tw",
+            name: "Seoul Moment",
+          },
+          subject: `[Seoul Moment 新訂單] ${order.orderNumber}`,
+          text: `訂單編號：${order.orderNumber}`,
+        });
+
+        console.log("Order email result:", result);
+      } catch (error) {
+        console.error("ORDER EMAIL ERROR:", error);
+      }
+
       if (session.step !== "confirmation") {
         await line.reply(event.replyToken, [
           createTextMessage(
@@ -202,10 +223,6 @@ export async function orderPostbackRouter(
 
         return true;
       }
-
-      const orderService = new OrderService(db);
-
-      const order = await orderService.createFromSession(session);
 
       // 주문은 이미 DB에 저장됨.
       // 이메일 실패가 주문 자체를 삭제시키면 안 됨.
