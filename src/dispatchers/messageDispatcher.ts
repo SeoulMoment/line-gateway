@@ -14,7 +14,7 @@ export async function dispatchMessage(
 ): Promise<void> {
   switch (event.type) {
     case "message":
-      await textHandler(event as MessageEvent, line);
+      await textHandler(event as MessageEvent, line, db);
       break;
 
     case "follow":
