@@ -3,14 +3,13 @@ import type { LineService } from "../services/line";
 import { OrderService } from "../services/order";
 import { OrderEmailService } from "../services/orderEmail";
 import { OrderSessionService } from "../services/orderSession";
-import { EmailBinding } from "../types/email";
 import type { PostbackEvent } from "../types/line/webhook";
 
 export async function orderPostbackRouter(
   event: PostbackEvent,
   line: LineService,
   db: D1Database,
-  email: EmailBinding,
+  resendApiKey: string,
 ): Promise<boolean> {
   const data = event.postback.data;
   const lineUserId = event.source.userId;
@@ -193,27 +192,6 @@ export async function orderPostbackRouter(
         return true;
       }
 
-      const orderService = new OrderService(db);
-      const order = await orderService.createFromSession(session);
-
-      try {
-        console.log("Sending order email:", order.orderNumber);
-
-        const result = await email.send({
-          to: "seoulmomenttw@gmail.com",
-          from: {
-            email: "order@seoulmoment.com.tw",
-            name: "Seoul Moment",
-          },
-          subject: `[Seoul Moment 新訂單] ${order.orderNumber}`,
-          text: `訂單編號：${order.orderNumber}`,
-        });
-
-        console.log("Order email result:", result);
-      } catch (error) {
-        console.error("ORDER EMAIL ERROR:", error);
-      }
-
       if (session.step !== "confirmation") {
         await line.reply(event.replyToken, [
           createTextMessage(
@@ -224,19 +202,29 @@ export async function orderPostbackRouter(
         return true;
       }
 
-      // 주문은 이미 DB에 저장됨.
-      // 이메일 실패가 주문 자체를 삭제시키면 안 됨.
+      // 1. 주문을 D1 orders 테이블에 먼저 저장
+      const orderService = new OrderService(db);
+
+      const order = await orderService.createFromSession(session);
+
+      console.log("Order created successfully:", order.orderNumber);
+
+      // 2. Resend를 통해 관리자 이메일 발송
+      // 이메일이 실패해도 이미 저장된 주문은 유지
       try {
-        const orderEmail = new OrderEmailService(email);
+        const orderEmail = new OrderEmailService(resendApiKey);
 
         await orderEmail.sendNewOrder(order);
+
+        console.log("Order email sent successfully:", order.orderNumber);
       } catch (error) {
         console.error("Failed to send order notification email:", error);
       }
 
-      // 정식 주문 저장 후 임시 세션 삭제
+      // 3. 임시 주문 세션 삭제
       await orderSession.delete(lineUserId);
 
+      // 4. 고객에게 주문 접수 완료 안내
       await line.reply(event.replyToken, [
         createTextMessage(
           "✅ 訂單已成功送出\n\n" +

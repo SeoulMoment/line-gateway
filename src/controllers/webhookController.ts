@@ -2,12 +2,11 @@ import { Context } from "hono";
 
 import { dispatchMessage } from "../dispatchers/messageDispatcher";
 import { LineService } from "../services/line";
-import { EmailBinding } from "../types/email";
 
 interface Bindings {
   LINE_CHANNEL_ACCESS_TOKEN: string;
   line_gateway_db: D1Database;
-  ORDER_EMAIL: EmailBinding;
+  RESEND_API_KEY: string;
 }
 
 export async function webhookController(c: Context<{ Bindings: Bindings }>) {
@@ -22,7 +21,7 @@ export async function webhookController(c: Context<{ Bindings: Bindings }>) {
       event,
       line,
       c.env.line_gateway_db,
-      c.env.ORDER_EMAIL,
+      c.env.RESEND_API_KEY,
     );
   }
 

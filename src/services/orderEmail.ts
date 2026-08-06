@@ -1,8 +1,7 @@
 import type { Order } from "../models/order";
-import type { EmailBinding } from "../types/email";
 
 export class OrderEmailService {
-  constructor(private readonly email: EmailBinding) {}
+  constructor(private readonly apiKey: string) {}
 
   async sendNewOrder(order: Order): Promise<void> {
     const platform = order.platform === "shopee" ? "Shopee" : "LINE";
@@ -42,14 +41,26 @@ export class OrderEmailService {
       "Seoul Moment\n" +
       "Automated Order System";
 
-    await this.email.send({
-      to: "seoulmomenttw@gmail.com",
-      from: {
-        email: "order@seoulmoment.com.tw",
-        name: "Seoul Moment",
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        "Content-Type": "application/json",
       },
-      subject,
-      text,
+      body: JSON.stringify({
+        from: "Seoul Moment <onboarding@resend.dev>",
+        to: ["seoulmomenttw@gmail.com"],
+        subject,
+        text,
+      }),
     });
+
+    if (!response.ok) {
+      const error = await response.text();
+
+      throw new Error(
+        `Failed to send order email: ${response.status} ${error}`,
+      );
+    }
   }
 }
