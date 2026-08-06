@@ -1,26 +1,27 @@
 {
-  "vars": {
-    "APP_NAME": "Seoul Moment",
-  },
-
-  "$schema": "node_modules/wrangler/config-schema.json",
-
-  "name": "line-gateway",
-
-  "main": "src/index.ts",
-
-  "compatibility_date": "2026-07-16",
-
-  "observability": {
-    "enabled": true,
-  },
-
-  "upload_source_maps": true,
-
-  "compatibility_flags": ["nodejs_compat"],
-
-  "assets": {
-    "directory": "./public/",
-    "binding": "ASSETS",
-  },
+	"vars": {
+		"APP_NAME": "Seoul Moment",
+	},
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "line-gateway",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-07-16",
+	"observability": {
+		"enabled": true,
+	},
+	"upload_source_maps": true,
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"directory": "./public/",
+		"binding": "ASSETS",
+	},
+	"d1_databases": [
+		{
+			"binding": "line_gateway_db",
+			"database_name": "line-gateway-db",
+			"database_id": "6b75cf6d-12dc-4420-b56c-51d298e41847"
+		}
+	],
 }

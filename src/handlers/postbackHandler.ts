@@ -5,6 +5,7 @@ import type { PostbackEvent } from "../types/line/webhook";
 export async function postbackHandler(
   event: PostbackEvent,
   line: LineService,
+  db: D1Database,
 ): Promise<void> {
-  await postbackRouter(event, line);
+  await postbackRouter(event, line, db);
 }

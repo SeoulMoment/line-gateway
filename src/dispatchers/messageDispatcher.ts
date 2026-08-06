@@ -10,6 +10,7 @@ import {
 export async function dispatchMessage(
   event: WebhookEvent,
   line: LineService,
+  db: D1Database,
 ): Promise<void> {
   switch (event.type) {
     case "message":
@@ -21,7 +22,7 @@ export async function dispatchMessage(
       break;
 
     case "postback":
-      await postbackHandler(event as PostbackEvent, line);
+      await postbackHandler(event as PostbackEvent, line, db);
       break;
   }
 }

@@ -13,6 +13,7 @@ import { orderPostbackRouter } from "./orderPostbackRouter";
 export async function postbackRouter(
   event: PostbackEvent,
   line: LineService,
+  db: D1Database,
 ): Promise<void> {
   const data = event.postback.data;
 
@@ -28,8 +29,8 @@ export async function postbackRouter(
     return;
   }
 
-  // 주문 관련 postback
-  const handled = await orderPostbackRouter(event, line);
+  // 주문 관련 Postback
+  const handled = await orderPostbackRouter(event, line, db);
 
   if (handled) {
     return;

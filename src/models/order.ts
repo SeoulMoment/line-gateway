@@ -1,9 +1,20 @@
 export type OrderPlatform = "line" | "shopee";
 
+export type OrderStep =
+  | "externalOrderId"
+  | "customerName"
+  | "productName"
+  | "size"
+  | "color"
+  | "phone"
+  | "convenienceStore"
+  | "storeName"
+  | "confirmation";
+
 export interface OrderForm {
   platform?: OrderPlatform;
 
-  // Shopee에서 이미 주문한 경우
+  // Shopee 주문인 경우 사용
   externalOrderId?: string;
 
   customerName?: string;
@@ -11,7 +22,12 @@ export interface OrderForm {
   size?: string;
   color?: string;
   phone?: string;
-
   convenienceStore?: string;
   storeName?: string;
+}
+
+export interface OrderSession extends OrderForm {
+  lineUserId: string;
+  platform: OrderPlatform;
+  step: OrderStep;
 }
