@@ -11,7 +11,7 @@ export function createSupportFlex(): FlexMessage {
 
       hero: {
         type: "image",
-        url: `${ASSET_BASE_URL}/menu/support.webp`,
+        url: `${ASSET_BASE_URL}/menu/support.webp?v=2`,
         size: "full",
         aspectRatio: "20:8",
         aspectMode: "cover",
