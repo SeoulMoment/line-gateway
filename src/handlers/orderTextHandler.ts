@@ -33,6 +33,7 @@ export async function orderTextHandler(
   }
 
   switch (session.step) {
+    // Shopee 주문번호
     case "externalOrderId":
       await orderSession.updateField(
         lineUserId,
@@ -44,13 +45,14 @@ export async function orderTextHandler(
       await line.reply(event.replyToken, [
         createTextMessage(
           "✅ Shopee 訂單編號已登記\n\n" +
-            "② 請輸入訂購人姓名。\n\n" +
-            "請輸入與 Shopee 訂單相同的姓名，以便我們確認您的訂單。",
+            "② 請輸入訂購人姓名\n\n" +
+            "請輸入與 Shopee 訂單相同的真實姓名，以便我們確認您的訂單。",
         ),
       ]);
 
       return true;
 
+    // 주문자 실명
     case "customerName":
       await orderSession.updateField(
         lineUserId,
@@ -61,18 +63,25 @@ export async function orderTextHandler(
 
       await line.reply(event.replyToken, [
         createTextMessage(
-          "✅ 姓名已登記\n\n" + "接下來，請輸入您要訂購的商品名稱。",
+          "✅ 姓名已登記\n\n" +
+            "接下來，請輸入您要訂購的商品名稱。",
         ),
       ]);
 
       return true;
 
+    // 상품명
     case "productName":
-      await orderSession.updateField(lineUserId, "product_name", text, "size");
+      await orderSession.updateField(
+        lineUserId,
+        "product_name",
+        text,
+        "size",
+      );
 
       await line.reply(event.replyToken, [
         createTextMessage(
-          "📏 請輸入商品尺寸。\n\n" +
+          "📏 請輸入商品尺寸\n\n" +
             "例如：S / M / L / XL / FREE\n\n" +
             "如果商品沒有尺寸選項，請輸入「無」。",
         ),
@@ -80,60 +89,146 @@ export async function orderTextHandler(
 
       return true;
 
+    // 사이즈
     case "size":
-      await orderSession.updateField(lineUserId, "size", text, "color");
+      await orderSession.updateField(
+        lineUserId,
+        "size",
+        text,
+        "color",
+      );
 
       await line.reply(event.replyToken, [
         createTextMessage(
-          "🎨 請輸入商品顏色。\n\n" + "例如：Black / White / Beige",
+          "🎨 請輸入商品顏色\n\n" +
+            "例如：Black / White / Beige",
         ),
       ]);
 
       return true;
 
+    // 색상
     case "color":
-      await orderSession.updateField(lineUserId, "color", text, "phone");
+      await orderSession.updateField(
+        lineUserId,
+        "color",
+        text,
+        "phone",
+      );
 
       await line.reply(event.replyToken, [
         createTextMessage(
-          "📱 請輸入聯絡電話。\n\n" + "此電話將用於訂單及配送聯絡。",
+          "📱 請輸入聯絡電話\n\n" +
+            "請輸入 09 開頭的 10 碼台灣手機號碼。\n\n" +
+            "例如：0912345678",
         ),
       ]);
 
       return true;
 
-    case "phone":
+    // 전화번호
+    case "phone": {
+      // 공백과 - 제거
+      const phone = text.replace(/[\s-]/g, "");
+
+      // 대만 휴대폰 번호:
+      // 09 + 숫자 8자리 = 총 10자리
+      if (!/^09\d{8}$/.test(phone)) {
+        await line.reply(event.replyToken, [
+          createTextMessage(
+            "⚠️ 電話號碼格式不正確\n\n" +
+              "請輸入 09 開頭的 10 碼台灣手機號碼。\n\n" +
+              "例如：0912345678",
+          ),
+        ]);
+
+        return true;
+      }
+
       await orderSession.updateField(
         lineUserId,
         "phone",
-        text,
+        phone,
         "convenienceStore",
       );
 
       await line.reply(event.replyToken, [
-        createTextMessage("🏪 請輸入取貨超商。\n\n" + "例如：7-ELEVEN / 全家"),
+        {
+          type: "flex",
+          altText: "選擇取貨超商",
+          contents: {
+            type: "bubble",
+
+            body: {
+              type: "box",
+              layout: "vertical",
+              spacing: "md",
+              contents: [
+                {
+                  type: "text",
+                  text: "🏪 選擇取貨超商",
+                  weight: "bold",
+                  size: "lg",
+                },
+                {
+                  type: "text",
+                  text: "請選擇您希望取貨的超商。",
+                  size: "sm",
+                  color: "#888888",
+                  wrap: true,
+                },
+              ],
+            },
+
+            footer: {
+              type: "box",
+              layout: "vertical",
+              spacing: "sm",
+              contents: [
+                {
+                  type: "button",
+                  style: "primary",
+                  color: "#008C44",
+                  action: {
+                    type: "postback",
+                    label: "7-ELEVEN",
+                    data: "order:store:seven",
+                    displayText: "7-ELEVEN",
+                  },
+                },
+                {
+                  type: "button",
+                  style: "secondary",
+                  action: {
+                    type: "postback",
+                    label: "全家 FamilyMart",
+                    data: "order:store:familymart",
+                    displayText: "全家 FamilyMart",
+                  },
+                },
+              ],
+            },
+          },
+        },
       ]);
 
       return true;
+    }
 
+    // 편의점은 반드시 버튼으로 선택
     case "convenienceStore":
-      await orderSession.updateField(
-        lineUserId,
-        "convenience_store",
-        text,
-        "storeName",
-      );
-
       await line.reply(event.replyToken, [
         createTextMessage(
-          "📍 最後一步\n\n" +
-            "請輸入取貨門市資訊。\n\n" +
-            "請提供門市名稱，若方便也可以一起提供門市地址。",
+          "🏪 請使用上方按鈕選擇取貨超商。\n\n" +
+            "目前可選擇：\n" +
+            "・7-ELEVEN\n" +
+            "・全家 FamilyMart",
         ),
       ]);
 
       return true;
 
+    // 편의점 지점명
     case "storeName": {
       await orderSession.updateField(
         lineUserId,
@@ -155,7 +250,17 @@ export async function orderTextHandler(
       return true;
     }
 
+    // 최종 확인 대기
     case "confirmation":
+      await line.reply(event.replyToken, [
+        createTextMessage(
+          "請使用訂購資料確認卡下方的按鈕完成操作。\n\n" +
+            "・確認送出\n" +
+            "・重新填寫\n" +
+            "・取消訂購",
+        ),
+      ]);
+
       return true;
 
     default:

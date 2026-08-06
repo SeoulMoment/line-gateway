@@ -26,12 +26,12 @@ export async function orderPostbackRouter(
         createTextMessage(
           "🛍️ LINE 訂購\n\n" +
             "接下來將一步一步協助您完成商品訂購。\n\n" +
-            "① 請輸入訂購人姓名。",
+            "① 請輸入訂購人姓名\n" +
+            "請填寫與匯款帳戶相同的真實姓名，以便我們確認付款。",
         ),
       ]);
 
       return true;
-
     case "order:platform:shopee":
       await orderSession.create(lineUserId, "shopee", "externalOrderId");
 

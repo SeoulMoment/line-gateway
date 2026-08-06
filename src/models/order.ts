@@ -11,12 +11,12 @@ export type OrderStep =
   | "storeName"
   | "confirmation";
 
+export type OrderStatus =
+  "pending" | "confirmed" | "preparing" | "shipped" | "completed" | "cancelled";
+
 export interface OrderForm {
   platform?: OrderPlatform;
-
-  // Shopee 주문인 경우 사용
   externalOrderId?: string;
-
   customerName?: string;
   productName?: string;
   size?: string;
@@ -30,4 +30,21 @@ export interface OrderSession extends OrderForm {
   lineUserId: string;
   platform: OrderPlatform;
   step: OrderStep;
+}
+
+export interface Order {
+  id: number;
+  orderNumber: string;
+  lineUserId: string;
+  platform: OrderPlatform;
+  externalOrderId?: string;
+  customerName: string;
+  productName: string;
+  size: string;
+  color: string;
+  phone: string;
+  convenienceStore: string;
+  storeName: string;
+  status: OrderStatus;
+  createdAt: string;
 }
