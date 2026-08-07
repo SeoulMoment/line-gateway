@@ -1,4 +1,5 @@
 import { createOrderConfirmationFlex } from "../builders/flex/orderConfirmation";
+import { createOrderInputStepFlex } from "../builders/flex/orderInputStep";
 import { createTextMessage } from "../builders/message/text";
 import type { LineService } from "../services/line";
 import { OrderSessionService } from "../services/orderSession";
@@ -43,13 +44,13 @@ export async function orderTextHandler(
       );
 
       await line.reply(event.replyToken, [
-        createTextMessage(
-          "ORDER · 02\n" +
-            "訂購人姓名\n\n" +
-            "Shopee 訂單編號已登記 ✓\n\n" +
-            "請輸入與 Shopee 訂單相同的真實姓名，" +
-            "以便我們確認您的訂單。",
-        ),
+        createOrderInputStepFlex({
+          section: "訂購人資訊",
+          title: "訂購人姓名",
+          description: "請輸入與 Shopee 訂單相同的真實姓名。",
+          hint: "我們將使用此姓名確認您的 Shopee 訂單。",
+          completed: "Shopee 訂單編號已登記",
+        }),
       ]);
 
       return true;
@@ -64,13 +65,13 @@ export async function orderTextHandler(
       );
 
       await line.reply(event.replyToken, [
-        createTextMessage(
-          "ORDER · 商品資訊\n" +
-            "商品名稱\n\n" +
-            "訂購人姓名已登記 ✓\n\n" +
-            "請輸入您要訂購的商品名稱。\n\n" +
-            "請盡量填寫完整商品名稱，以便我們確認商品。",
-        ),
+        createOrderInputStepFlex({
+          section: "商品資訊",
+          title: "商品名稱",
+          description: "請輸入您要訂購的商品名稱。",
+          hint: "請依照商品頁面顯示的完整商品名稱填寫。",
+          completed: "訂購人姓名已登記",
+        }),
       ]);
 
       return true;
@@ -80,15 +81,15 @@ export async function orderTextHandler(
       await orderSession.updateField(lineUserId, "product_name", text, "size");
 
       await line.reply(event.replyToken, [
-        createTextMessage(
-          "ORDER · 商品資訊\n" +
-            "商品尺寸\n\n" +
-            "商品名稱已登記 ✓\n\n" +
-            "請輸入您要訂購的尺寸。\n\n" +
-            "例如：S / M / L / 1 / 2 / 26 / 230 / FREE\n\n" +
-            "請依照商品頁面標示的尺寸填寫。\n" +
-            "若商品沒有尺寸選項，請輸入「無」。",
-        ),
+        createOrderInputStepFlex({
+          section: "商品資訊",
+          title: "商品尺寸",
+          description: "請輸入您要訂購的尺寸。",
+          hint:
+            "例如：M / XL / 2 / 26 / 230 / FREE\n" +
+            "請依照商品頁面標示的尺寸填寫。若無尺寸選項，請輸入「無」。",
+          completed: "商品名稱已登記",
+        }),
       ]);
 
       return true;
@@ -98,29 +99,29 @@ export async function orderTextHandler(
       await orderSession.updateField(lineUserId, "size", text, "color");
 
       await line.reply(event.replyToken, [
-        createTextMessage(
-          "ORDER · 商品資訊\n" +
-            "商品顏色\n\n" +
-            "尺寸已登記 ✓\n\n" +
-            "請輸入您要訂購的商品顏色。\n\n" +
-            "例如：Black / White / Beige",
-        ),
+        createOrderInputStepFlex({
+          section: "商品資訊",
+          title: "商品顏色",
+          description: "請輸入您要訂購的商品顏色。",
+          hint: "例如：Black / White / Beige",
+          completed: "商品尺寸已登記",
+        }),
       ]);
-
       return true;
 
+    // 색상
     // 색상
     case "color":
       await orderSession.updateField(lineUserId, "color", text, "phone");
 
       await line.reply(event.replyToken, [
-        createTextMessage(
-          "ORDER · 聯絡資訊\n" +
-            "聯絡電話\n\n" +
-            "商品資訊已登記 ✓\n\n" +
-            "請輸入 09 開頭的 10 碼台灣手機號碼。\n\n" +
-            "例如：0912345678",
-        ),
+        createOrderInputStepFlex({
+          section: "聯絡資訊",
+          title: "聯絡電話",
+          description: "請輸入 09 開頭的 10 碼台灣手機號碼。",
+          hint: "例如：0912345678",
+          completed: "商品資訊已登記",
+        }),
       ]);
 
       return true;
@@ -131,11 +132,12 @@ export async function orderTextHandler(
 
       if (!/^09\d{8}$/.test(phone)) {
         await line.reply(event.replyToken, [
-          createTextMessage(
-            "電話號碼格式不正確\n\n" +
-              "請確認後重新輸入 09 開頭的 10 碼台灣手機號碼。\n\n" +
-              "例如：0912345678",
-          ),
+          createOrderInputStepFlex({
+            section: "聯絡資訊",
+            title: "聯絡電話",
+            description: "電話號碼格式不正確，請重新輸入。",
+            hint: "請輸入 09 開頭的 10 碼台灣手機號碼。\n" + "例如：0912345678",
+          }),
         ]);
 
         return true;
