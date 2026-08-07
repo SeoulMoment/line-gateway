@@ -193,6 +193,7 @@ export function createPaymentInfoFlex(): FlexMessage {
         layout: "vertical",
         paddingAll: "16px",
         paddingTop: "4px",
+        spacing: "sm",
         contents: [
           {
             type: "button",
@@ -203,6 +204,17 @@ export function createPaymentInfoFlex(): FlexMessage {
               type: "uri",
               label: "付款問題・聯絡客服",
               uri: "https://seoulmoment.com.tw/zh-TW/contact",
+            },
+          },
+          {
+            type: "button",
+            style: "secondary",
+            height: "sm",
+            action: {
+              type: "postback",
+              label: "完成",
+              data: "payment:complete",
+              displayText: "完成",
             },
           },
         ],

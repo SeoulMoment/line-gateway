@@ -36,6 +36,21 @@ export async function postbackRouter(
     return;
   }
 
+  if (data === "payment:complete") {
+    await line.reply(event.replyToken, [
+      {
+        type: "text",
+        text:
+          "✓ 訂購完成\n\n" +
+          "感謝您的訂購！\n\n" +
+          "款項確認後，我們將透過 LINE 通知您。\n\n" +
+          "您可以隨時使用下方選單查看商品或聯絡客服。",
+      },
+    ]);
+
+    return;
+  }
+
   // 주문 관련 Postback
   const handled = await orderPostbackRouter(event, line, db, resendApiKey);
 
