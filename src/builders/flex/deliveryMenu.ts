@@ -20,13 +20,22 @@ export function createDeliveryGuideFlex(): FlexMessage {
       body: {
         type: "box",
         layout: "vertical",
+        paddingAll: "24px",
         spacing: "md",
         contents: [
           {
             type: "text",
-            text: "配送說明",
+            text: "DELIVERY",
+            size: "xs",
+            color: "#999999",
             weight: "bold",
+          },
+          {
+            type: "text",
+            text: "配送說明",
             size: "xl",
+            weight: "bold",
+            color: "#111111",
           },
           {
             type: "text",
@@ -34,60 +43,149 @@ export function createDeliveryGuideFlex(): FlexMessage {
             size: "sm",
             color: "#666666",
             wrap: true,
+            lineSpacing: "4px",
           },
+
           {
             type: "separator",
+            margin: "xl",
+            color: "#EEEEEE",
+          },
+
+          // 배송 정보 카드
+          {
+            type: "box",
+            layout: "vertical",
+            margin: "lg",
+            paddingAll: "16px",
+            backgroundColor: "#F7F7F7",
+            cornerRadius: "12px",
+            spacing: "lg",
+            contents: [
+              {
+                type: "box",
+                layout: "vertical",
+                spacing: "xs",
+                contents: [
+                  {
+                    type: "text",
+                    text: "韓國直送",
+                    size: "sm",
+                    weight: "bold",
+                    color: "#111111",
+                  },
+                  {
+                    type: "text",
+                    text: "商品於韓國完成備貨及出貨後，抵達台灣並安排國內配送。",
+                    size: "xs",
+                    color: "#777777",
+                    wrap: true,
+                    lineSpacing: "3px",
+                  },
+                ],
+              },
+
+              {
+                type: "separator",
+                color: "#E5E5E5",
+              },
+
+              {
+                type: "box",
+                layout: "vertical",
+                spacing: "xs",
+                contents: [
+                  {
+                    type: "text",
+                    text: "預計配送時間",
+                    size: "sm",
+                    weight: "bold",
+                    color: "#111111",
+                  },
+                  {
+                    type: "text",
+                    text: "約 7–14 個工作天",
+                    size: "md",
+                    weight: "bold",
+                    color: "#111111",
+                  },
+                  {
+                    type: "text",
+                    text: "實際時間可能依韓國備貨、航班、海關及物流狀況有所調整。",
+                    size: "xs",
+                    color: "#777777",
+                    wrap: true,
+                    lineSpacing: "3px",
+                  },
+                ],
+              },
+
+              {
+                type: "separator",
+                color: "#E5E5E5",
+              },
+
+              {
+                type: "box",
+                layout: "vertical",
+                spacing: "xs",
+                contents: [
+                  {
+                    type: "text",
+                    text: "出貨通知",
+                    size: "sm",
+                    weight: "bold",
+                    color: "#111111",
+                  },
+                  {
+                    type: "text",
+                    text: "商品完成出貨後，我們將依訂單資訊提供相關配送通知。",
+                    size: "xs",
+                    color: "#777777",
+                    wrap: true,
+                    lineSpacing: "3px",
+                  },
+                ],
+              },
+            ],
+          },
+
+          // 안내
+          {
+            type: "box",
+            layout: "vertical",
             margin: "md",
+            paddingAll: "14px",
+            backgroundColor: "#FFF9EC",
+            cornerRadius: "10px",
+            spacing: "sm",
+            contents: [
+              {
+                type: "text",
+                text: "配送提醒",
+                size: "sm",
+                weight: "bold",
+                color: "#8A641E",
+              },
+              {
+                type: "text",
+                text: "海外配送可能因航班、海關或物流狀況產生些許延遲，敬請見諒。",
+                size: "xs",
+                color: "#755A28",
+                wrap: true,
+                lineSpacing: "3px",
+              },
+            ],
           },
+
           {
             type: "text",
-            text: "🇰🇷 韓國直送",
-            weight: "bold",
-            size: "sm",
-            margin: "md",
-          },
-          {
-            type: "text",
-            text: "商品將由韓國進行備貨及出貨，抵達台灣後安排台灣國內配送。",
-            size: "sm",
-            color: "#666666",
-            wrap: true,
-          },
-          {
-            type: "text",
-            text: "🚚 配送時間",
-            weight: "bold",
-            size: "sm",
-            margin: "md",
-          },
-          {
-            type: "text",
-            text: "一般約 7–14 個工作天，實際配送時間可能依韓國備貨、航班、海關及物流狀況有所調整。",
-            size: "sm",
-            color: "#666666",
-            wrap: true,
-          },
-          {
-            type: "text",
-            text: "📦 出貨通知",
-            weight: "bold",
-            size: "sm",
-            margin: "md",
-          },
-          {
-            type: "text",
-            text: "商品完成出貨後，我們將依訂單資訊提供相關配送通知。",
-            size: "sm",
-            color: "#666666",
-            wrap: true,
-          },
-          {
-            type: "text",
-            text: "如有配送相關問題，歡迎透過客服與我們聯絡。",
+            text: "如有配送相關問題，歡迎透過「聯絡客服」與我們聯繫。",
             size: "xs",
             color: "#999999",
             wrap: true,
-            margin: "lg",
+            lineSpacing: "3px",
+            margin: "sm",
           },
         ],
       },
