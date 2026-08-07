@@ -6,6 +6,8 @@ interface OrderInputStepOptions {
   description: string;
   hint?: string;
   completed?: string;
+  step?: string;
+  subtitle?: string;
 }
 
 export function createOrderInputStepFlex({
@@ -14,6 +16,8 @@ export function createOrderInputStepFlex({
   description,
   hint,
   completed,
+  step,
+  subtitle,
 }: OrderInputStepOptions): FlexMessage {
   return {
     type: "flex",
@@ -27,51 +31,110 @@ export function createOrderInputStepFlex({
         paddingAll: "24px",
         spacing: "md",
         contents: [
+          // 상단 ORDER PROCESS + STEP
           {
-            type: "text",
-            text: "ORDER",
-            size: "xs",
-            color: "#999999",
-            weight: "bold",
+            type: "box",
+            layout: "horizontal",
+            contents: [
+              {
+                type: "text",
+                text: "ORDER PROCESS",
+                size: "xs",
+                color: "#777777",
+                weight: "bold",
+                flex: 1,
+              },
+              ...(step
+                ? [
+                    {
+                      type: "text" as const,
+                      text: step,
+                      size: "xs" as const,
+                      color: "#111111",
+                      weight: "bold" as const,
+                      align: "end" as const,
+                    },
+                  ]
+                : []),
+            ],
           },
+
+          // 현재 섹션
           {
             type: "text",
             text: section,
             size: "xl",
             weight: "bold",
             color: "#111111",
+            margin: "md",
           },
 
-          ...(completed
+          // 현재 단계 설명
+          ...(subtitle
             ? [
                 {
                   type: "text" as const,
-                  text: `${completed} ✓`,
-                  size: "xs" as const,
-                  color: "#999999",
+                  text: subtitle,
+                  size: "sm" as const,
+                  color: "#555555",
+                  wrap: true,
+                  margin: "xs" as const,
                 },
               ]
             : []),
 
           {
             type: "separator",
-            margin: "xl",
-            color: "#EEEEEE",
+            margin: "lg",
+            color: "#E5E5E5",
           },
 
+          // 이전 단계 완료
+          ...(completed
+            ? [
+                {
+                  type: "box" as const,
+                  layout: "horizontal" as const,
+                  margin: "lg" as const,
+                  paddingAll: "12px",
+                  backgroundColor: "#F3F3F3",
+                  cornerRadius: "8px",
+                  contents: [
+                    {
+                      type: "text" as const,
+                      text: "✓",
+                      size: "sm" as const,
+                      color: "#111111",
+                      weight: "bold" as const,
+                      flex: 0,
+                    },
+                    {
+                      type: "text" as const,
+                      text: completed,
+                      size: "sm" as const,
+                      color: "#555555",
+                      margin: "sm" as const,
+                      wrap: true,
+                    },
+                  ],
+                },
+              ]
+            : []),
+
+          // 현재 입력 항목
           {
             type: "box",
             layout: "vertical",
-            margin: "lg",
-            paddingAll: "16px",
-            backgroundColor: "#F7F7F7",
+            margin: completed ? "md" : "lg",
+            paddingAll: "18px",
+            backgroundColor: "#F8F8F8",
             cornerRadius: "12px",
-            spacing: "sm",
+            spacing: "md",
             contents: [
               {
                 type: "text",
                 text: title,
-                size: "sm",
+                size: "md",
                 weight: "bold",
                 color: "#111111",
               },
@@ -79,20 +142,25 @@ export function createOrderInputStepFlex({
                 type: "text",
                 text: description,
                 size: "sm",
-                color: "#666666",
+                color: "#444444",
                 wrap: true,
-                lineSpacing: "4px",
+                lineSpacing: "5px",
               },
 
               ...(hint
                 ? [
                     {
+                      type: "separator" as const,
+                      margin: "sm" as const,
+                      color: "#E8E8E8",
+                    },
+                    {
                       type: "text" as const,
                       text: hint,
                       size: "xs" as const,
-                      color: "#999999",
+                      color: "#666666",
                       wrap: true,
-                      lineSpacing: "3px",
+                      lineSpacing: "4px",
                       margin: "sm" as const,
                     },
                   ]
@@ -100,13 +168,29 @@ export function createOrderInputStepFlex({
             ],
           },
 
+          // 입력 안내
           {
-            type: "text",
-            text: `請直接在下方聊天室輸入${title}`,
-            size: "xs",
-            color: "#999999",
-            wrap: true,
-            margin: "sm",
+            type: "box",
+            layout: "horizontal",
+            margin: "md",
+            contents: [
+              {
+                type: "text",
+                text: "↓",
+                size: "sm",
+                color: "#111111",
+                flex: 0,
+              },
+              {
+                type: "text",
+                text: `下方聊天室輸入${title}`,
+                size: "sm",
+                color: "#555555",
+                weight: "bold",
+                margin: "sm",
+                wrap: true,
+              },
+            ],
           },
         ],
       },

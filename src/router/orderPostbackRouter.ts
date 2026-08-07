@@ -31,6 +31,8 @@ export async function orderPostbackRouter(
       await line.reply(event.replyToken, [
         createOrderInputStepFlex({
           section: "訂購人資訊",
+          subtitle: "填寫訂購人的基本資料",
+          step: "01 / 04",
           title: "訂購人姓名",
           description: "請輸入訂購人的真實姓名。",
           hint: "請填寫與匯款帳戶相同的姓名，方便我們確認您的付款。",
@@ -86,15 +88,17 @@ export async function orderPostbackRouter(
       await line.reply(event.replyToken, [
         createOrderInputStepFlex({
           section: "取貨資訊",
-          title: "取貨門市",
+          subtitle: "填寫您的取貨門市",
+          step: "04 / 04",
+          title: "7-ELEVEN 取貨門市",
           description: "請輸入您希望取貨的 7-ELEVEN 門市名稱。",
-          hint: "例如：信義門市\n請依照 7-ELEVEN 顯示的完整門市名稱填寫。",
+          hint: "例如：信義門市\n" + "請依照 7-ELEVEN 顯示的完整門市名稱填寫。",
           completed: "7-ELEVEN 已選擇",
         }),
       ]);
+
       return true;
     }
-
     // FamilyMart 선택
     case "order:store:familymart": {
       const session = await orderSession.get(lineUserId);
@@ -127,9 +131,11 @@ export async function orderPostbackRouter(
       await line.reply(event.replyToken, [
         createOrderInputStepFlex({
           section: "取貨資訊",
-          title: "取貨門市",
+          subtitle: "填寫您的取貨門市",
+          step: "04 / 04",
+          title: "全家取貨門市",
           description: "請輸入您希望取貨的全家門市名稱。",
-          hint: "例如：台北信義店\n請依照全家顯示的完整門市名稱填寫。",
+          hint: "例如：台北信義店\n" + "請依照全家顯示的完整門市名稱填寫。",
           completed: "全家 FamilyMart 已選擇",
         }),
       ]);

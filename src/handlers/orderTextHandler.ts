@@ -46,10 +46,12 @@ export async function orderTextHandler(
       await line.reply(event.replyToken, [
         createOrderInputStepFlex({
           section: "訂購人資訊",
+          subtitle: "填寫訂購人的基本資料",
+          step: "01 / 04",
           title: "訂購人姓名",
           description: "請輸入與 Shopee 訂單相同的真實姓名。",
           hint: "我們將使用此姓名確認您的 Shopee 訂單。",
-          completed: "Shopee 訂單編號已登記",
+          completed: "Shopee 訂單編號已完成",
         }),
       ]);
 
@@ -67,10 +69,12 @@ export async function orderTextHandler(
       await line.reply(event.replyToken, [
         createOrderInputStepFlex({
           section: "商品資訊",
+          subtitle: "填寫您要購買的商品",
+          step: "02 / 04",
           title: "商品名稱",
           description: "請輸入您要訂購的商品名稱。",
           hint: "請依照商品頁面顯示的完整商品名稱填寫。",
-          completed: "訂購人姓名已登記",
+          completed: "訂購人資訊已完成",
         }),
       ]);
 
@@ -83,12 +87,14 @@ export async function orderTextHandler(
       await line.reply(event.replyToken, [
         createOrderInputStepFlex({
           section: "商品資訊",
+          subtitle: "填寫您要購買的商品",
+          step: "02 / 04",
           title: "商品尺寸",
           description: "請輸入您要訂購的尺寸。",
           hint:
             "例如：M / XL / 2 / 26 / 230 / FREE\n" +
             "請依照商品頁面標示的尺寸填寫。若無尺寸選項，請輸入「無」。",
-          completed: "商品名稱已登記",
+          completed: "商品名稱已完成",
         }),
       ]);
 
@@ -101,15 +107,17 @@ export async function orderTextHandler(
       await line.reply(event.replyToken, [
         createOrderInputStepFlex({
           section: "商品資訊",
+          subtitle: "填寫您要購買的商品",
+          step: "02 / 04",
           title: "商品顏色",
           description: "請輸入您要訂購的商品顏色。",
           hint: "例如：Black / White / Beige",
-          completed: "商品尺寸已登記",
+          completed: "商品尺寸已完成",
         }),
       ]);
+
       return true;
 
-    // 색상
     // 색상
     case "color":
       await orderSession.updateField(lineUserId, "color", text, "phone");
@@ -117,10 +125,12 @@ export async function orderTextHandler(
       await line.reply(event.replyToken, [
         createOrderInputStepFlex({
           section: "聯絡資訊",
+          subtitle: "填寫您的聯絡方式",
+          step: "03 / 04",
           title: "聯絡電話",
           description: "請輸入 09 開頭的 10 碼台灣手機號碼。",
           hint: "例如：0912345678",
-          completed: "商品資訊已登記",
+          completed: "商品資訊已完成",
         }),
       ]);
 
@@ -134,6 +144,8 @@ export async function orderTextHandler(
         await line.reply(event.replyToken, [
           createOrderInputStepFlex({
             section: "聯絡資訊",
+            subtitle: "請重新確認您的聯絡方式",
+            step: "03 / 04",
             title: "聯絡電話",
             description: "電話號碼格式不正確，請重新輸入。",
             hint: "請輸入 09 開頭的 10 碼台灣手機號碼。\n" + "例如：0912345678",
@@ -163,44 +175,86 @@ export async function orderTextHandler(
               paddingAll: "24px",
               spacing: "md",
               contents: [
+                // ORDER PROCESS + STEP
                 {
-                  type: "text",
-                  text: "ORDER",
-                  size: "xs",
-                  color: "#999999",
-                  weight: "bold",
+                  type: "box",
+                  layout: "horizontal",
+                  contents: [
+                    {
+                      type: "text",
+                      text: "ORDER PROCESS",
+                      size: "xs",
+                      color: "#777777",
+                      weight: "bold",
+                      flex: 1,
+                    },
+                    {
+                      type: "text",
+                      text: "04 / 04",
+                      size: "xs",
+                      color: "#111111",
+                      weight: "bold",
+                      align: "end",
+                    },
+                  ],
                 },
+
+                // 현재 섹션
                 {
                   type: "text",
-                  text: "選擇取貨超商",
+                  text: "取貨資訊",
                   size: "xl",
                   weight: "bold",
                   color: "#111111",
+                  margin: "md",
                 },
                 {
                   type: "text",
-                  text: "聯絡電話已登記 ✓",
-                  size: "xs",
-                  color: "#999999",
-                },
-                {
-                  type: "text",
-                  text: "請選擇您希望取貨的超商。",
+                  text: "選擇您希望取貨的超商",
                   size: "sm",
-                  color: "#666666",
+                  color: "#555555",
                   wrap: true,
                 },
 
                 {
                   type: "separator",
-                  margin: "xl",
-                  color: "#EEEEEE",
+                  margin: "lg",
+                  color: "#E5E5E5",
                 },
 
+                // 이전 단계 완료
                 {
                   type: "box",
                   layout: "horizontal",
                   margin: "lg",
+                  paddingAll: "12px",
+                  backgroundColor: "#F3F3F3",
+                  cornerRadius: "8px",
+                  contents: [
+                    {
+                      type: "text",
+                      text: "✓",
+                      size: "sm",
+                      color: "#111111",
+                      weight: "bold",
+                      flex: 0,
+                    },
+                    {
+                      type: "text",
+                      text: "聯絡資訊已完成",
+                      size: "sm",
+                      color: "#555555",
+                      margin: "sm",
+                      wrap: true,
+                    },
+                  ],
+                },
+
+                // 7-ELEVEN
+                {
+                  type: "box",
+                  layout: "horizontal",
+                  margin: "md",
                   paddingAll: "16px",
                   backgroundColor: "#F7F7F7",
                   cornerRadius: "12px",
@@ -229,7 +283,7 @@ export async function orderTextHandler(
                           type: "text",
                           text: "選擇 7-ELEVEN 門市取貨",
                           size: "xs",
-                          color: "#888888",
+                          color: "#666666",
                         },
                       ],
                     },
@@ -237,12 +291,13 @@ export async function orderTextHandler(
                       type: "text",
                       text: "›",
                       size: "xl",
-                      color: "#999999",
+                      color: "#777777",
                       align: "end",
                     },
                   ],
                 },
 
+                // FamilyMart
                 {
                   type: "box",
                   layout: "horizontal",
@@ -275,7 +330,7 @@ export async function orderTextHandler(
                           type: "text",
                           text: "選擇全家門市取貨",
                           size: "xs",
-                          color: "#888888",
+                          color: "#666666",
                         },
                       ],
                     },
@@ -283,7 +338,7 @@ export async function orderTextHandler(
                       type: "text",
                       text: "›",
                       size: "xl",
-                      color: "#999999",
+                      color: "#777777",
                       align: "end",
                     },
                   ],
@@ -301,8 +356,7 @@ export async function orderTextHandler(
     case "convenienceStore":
       await line.reply(event.replyToken, [
         createTextMessage(
-          "ORDER · 取貨資訊\n\n" +
-            "請使用上方選項選擇取貨超商。\n\n" +
+          "請使用上方選項選擇取貨超商。\n\n" +
             "目前提供：7-ELEVEN / 全家 FamilyMart",
         ),
       ]);
@@ -335,8 +389,7 @@ export async function orderTextHandler(
     case "confirmation":
       await line.reply(event.replyToken, [
         createTextMessage(
-          "ORDER · 訂購確認\n\n" +
-            "請使用上方「訂購內容確認」卡片完成操作。\n\n" +
+          "請使用上方「訂購內容確認」卡片完成操作。\n\n" +
             "確認資料無誤後請選擇「確認訂購」。",
         ),
       ]);

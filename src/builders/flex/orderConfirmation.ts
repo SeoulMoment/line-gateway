@@ -22,10 +22,6 @@ export function createOrderConfirmationFlex(order: OrderSession): FlexMessage {
       value: order.customerName ?? "-",
     },
     {
-      label: "聯絡電話",
-      value: order.phone ?? "-",
-    },
-    {
       label: "商品",
       value: order.productName ?? "-",
     },
@@ -36,6 +32,10 @@ export function createOrderConfirmationFlex(order: OrderSession): FlexMessage {
     {
       label: "顏色",
       value: order.color ?? "-",
+    },
+    {
+      label: "聯絡電話",
+      value: order.phone ?? "-",
     },
     {
       label: "取貨超商",
@@ -59,95 +59,123 @@ export function createOrderConfirmationFlex(order: OrderSession): FlexMessage {
         paddingAll: "24px",
         spacing: "md",
         contents: [
+          // Header
           {
-            type: "text",
-            text: "ORDER SUMMARY",
-            size: "xs",
-            color: "#999999",
-            weight: "bold",
+            type: "box",
+            layout: "horizontal",
+            contents: [
+              {
+                type: "text",
+                text: "ORDER SUMMARY",
+                size: "xs",
+                color: "#777777",
+                weight: "bold",
+                flex: 1,
+              },
+              {
+                type: "text",
+                text: "READY",
+                size: "xs",
+                color: "#111111",
+                weight: "bold",
+                align: "end",
+              },
+            ],
           },
+
           {
             type: "text",
             text: "訂購內容確認",
             size: "xl",
             weight: "bold",
             color: "#111111",
+            margin: "md",
           },
+
           {
             type: "text",
-            text: "請確認以下訂購資訊是否正確。",
+            text: "最後一步，請確認以下訂購資料是否正確。",
             size: "sm",
-            color: "#666666",
+            color: "#555555",
             wrap: true,
-            lineSpacing: "4px",
           },
 
           {
             type: "separator",
-            margin: "xl",
-            color: "#EEEEEE",
+            margin: "lg",
+            color: "#E5E5E5",
           },
 
+          // 주문 과정 완료 표시
+          {
+            type: "box",
+            layout: "horizontal",
+            margin: "lg",
+            paddingAll: "12px",
+            backgroundColor: "#F3F3F3",
+            cornerRadius: "8px",
+            contents: [
+              {
+                type: "text",
+                text: "✓",
+                size: "sm",
+                color: "#111111",
+                weight: "bold",
+                flex: 0,
+              },
+              {
+                type: "text",
+                text: "訂購資料填寫完成",
+                size: "sm",
+                color: "#555555",
+                weight: "bold",
+                margin: "sm",
+                wrap: true,
+              },
+            ],
+          },
+
+          // 주문 정보
           {
             type: "box",
             layout: "vertical",
-            margin: "lg",
-            paddingAll: "16px",
-            backgroundColor: "#F7F7F7",
+            margin: "md",
+            paddingAll: "18px",
+            backgroundColor: "#F8F8F8",
             cornerRadius: "12px",
             spacing: "md",
-            contents: rows.map((row) => ({
+            contents: rows.map((row, index) => ({
               type: "box",
               layout: "horizontal",
-              spacing: "md",
+              margin: index === 0 ? "none" : "sm",
               contents: [
                 {
                   type: "text",
                   text: row.label,
                   size: "xs",
-                  color: "#888888",
-                  flex: 2,
-                  gravity: "top",
+                  color: "#777777",
+                  flex: 3,
                 },
                 {
                   type: "text",
                   text: row.value,
                   size: "sm",
-                  color: "#111111",
+                  color: "#222222",
                   weight: "bold",
                   wrap: true,
-                  align: "end",
-                  flex: 4,
+                  flex: 5,
                 },
               ],
             })),
           },
 
           {
-            type: "box",
-            layout: "vertical",
-            margin: "md",
-            paddingAll: "14px",
-            backgroundColor: "#FFF9EC",
-            cornerRadius: "10px",
-            spacing: "sm",
-            contents: [
-              {
-                type: "text",
-                text: "送出前請再次確認",
-                size: "sm",
-                weight: "bold",
-                color: "#8A641E",
-              },
-              {
-                type: "text",
-                text: "請確認商品、尺寸、顏色及取貨門市資訊皆正確，確認後即可送出訂單。",
-                size: "xs",
-                color: "#755A28",
-                wrap: true,
-                lineSpacing: "3px",
-              },
-            ],
+            type: "text",
+            text: "確認無誤後，請點選下方「確認訂購」。",
+            size: "xs",
+            color: "#666666",
+            wrap: true,
+            margin: "sm",
           },
         ],
       },
@@ -155,15 +183,16 @@ export function createOrderConfirmationFlex(order: OrderSession): FlexMessage {
       footer: {
         type: "box",
         layout: "vertical",
-        paddingAll: "16px",
-        paddingTop: "4px",
+        paddingAll: "20px",
+        paddingTop: "0px",
         spacing: "sm",
         contents: [
+          // 메인 CTA
           {
             type: "button",
             style: "primary",
-            height: "sm",
             color: "#111111",
+            height: "sm",
             action: {
               type: "postback",
               label: "確認訂購",
@@ -171,6 +200,8 @@ export function createOrderConfirmationFlex(order: OrderSession): FlexMessage {
               displayText: "確認訂購",
             },
           },
+
+          // 다시 작성
           {
             type: "button",
             style: "secondary",
@@ -182,9 +213,13 @@ export function createOrderConfirmationFlex(order: OrderSession): FlexMessage {
               displayText: "重新填寫訂購資料",
             },
           },
+
+          // 취소
           {
             type: "button",
+            style: "link",
             height: "sm",
+            color: "#888888",
             action: {
               type: "postback",
               label: "取消訂購",
