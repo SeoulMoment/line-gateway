@@ -20,51 +20,113 @@ export function createSupportFlex(): FlexMessage {
       body: {
         type: "box",
         layout: "vertical",
+        paddingAll: "20px",
         spacing: "md",
         contents: [
+          {
+            type: "text",
+            text: "CUSTOMER SERVICE",
+            size: "xs",
+            color: "#999999",
+            weight: "bold",
+          },
           {
             type: "text",
             text: "聯絡客服",
             weight: "bold",
             size: "xl",
+            color: "#111111",
           },
           {
             type: "text",
-            text: "有任何商品、訂單或配送相關問題嗎？",
+            text: "商品、訂單、付款或配送相關問題，我們都很樂意協助您。",
             size: "sm",
             color: "#666666",
             wrap: true,
+            lineSpacing: "4px",
           },
-          {
-            type: "text",
-            text: "歡迎聯絡 Seoul Moment 客服，我們會盡快協助您處理。",
-            size: "sm",
-            color: "#666666",
-            wrap: true,
-          },
+
           {
             type: "separator",
-            margin: "md",
+            margin: "lg",
+            color: "#EEEEEE",
           },
+
+          // 付款資訊快捷入口
           {
-            type: "text",
-            text: "客服時間",
-            weight: "bold",
-            size: "sm",
-            margin: "md",
+            type: "box",
+            layout: "horizontal",
+            margin: "lg",
+            paddingAll: "14px",
+            backgroundColor: "#F7F7F7",
+            cornerRadius: "10px",
+            alignItems: "center",
+            action: {
+              type: "postback",
+              label: "付款資訊",
+              data: "payment:info",
+              displayText: "付款資訊",
+            },
+            contents: [
+              {
+                type: "box",
+                layout: "vertical",
+                flex: 1,
+                contents: [
+                  {
+                    type: "text",
+                    text: "付款資訊",
+                    weight: "bold",
+                    size: "sm",
+                    color: "#111111",
+                  },
+                  {
+                    type: "text",
+                    text: "銀行轉帳・匯款說明",
+                    size: "xs",
+                    color: "#888888",
+                    margin: "xs",
+                  },
+                ],
+              },
+              {
+                type: "text",
+                text: "›",
+                size: "xl",
+                color: "#999999",
+                align: "end",
+              },
+            ],
           },
+
+          // 客服時間
           {
-            type: "text",
-            text: "週一至週五 10:00–18:00",
-            size: "sm",
-            color: "#666666",
-          },
-          {
-            type: "text",
-            text: "非客服時間收到的訊息，我們將於下一個工作日依序回覆。",
-            size: "xs",
-            color: "#999999",
-            wrap: true,
+            type: "box",
+            layout: "vertical",
+            margin: "lg",
+            spacing: "sm",
+            contents: [
+              {
+                type: "text",
+                text: "客服時間",
+                weight: "bold",
+                size: "sm",
+                color: "#333333",
+              },
+              {
+                type: "text",
+                text: "週一至週五  10:00–18:00",
+                size: "sm",
+                color: "#666666",
+              },
+              {
+                type: "text",
+                text: "非客服時間收到的訊息，將於下一個工作日依序回覆。",
+                size: "xs",
+                color: "#999999",
+                wrap: true,
+              },
+            ],
           },
         ],
       },
@@ -72,10 +134,13 @@ export function createSupportFlex(): FlexMessage {
       footer: {
         type: "box",
         layout: "vertical",
+        paddingAll: "16px",
+        paddingTop: "4px",
         contents: [
           {
             type: "button",
             style: "primary",
+            height: "sm",
             color: "#111111",
             action: {
               type: "uri",

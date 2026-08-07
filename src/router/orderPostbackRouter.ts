@@ -1,3 +1,4 @@
+import { createPaymentInfoFlex } from "../builders/flex/paymentInfo";
 import { createTextMessage } from "../builders/message/text";
 import type { LineService } from "../services/line";
 import { OrderService } from "../services/order";
@@ -202,7 +203,7 @@ export async function orderPostbackRouter(
         return true;
       }
 
-      // 1. 주문을 D1 orders 테이블에 먼저 저장
+      // 1. 주문을 D1 orders 테이블에 저장
       const orderService = new OrderService(db);
 
       const order = await orderService.createFromSession(session);
@@ -210,7 +211,7 @@ export async function orderPostbackRouter(
       console.log("Order created successfully:", order.orderNumber);
 
       // 2. Resend를 통해 관리자 이메일 발송
-      // 이메일이 실패해도 이미 저장된 주문은 유지
+      // 이메일 발송이 실패해도 저장된 주문은 유지
       try {
         const orderEmail = new OrderEmailService(resendApiKey);
 
@@ -224,17 +225,16 @@ export async function orderPostbackRouter(
       // 3. 임시 주문 세션 삭제
       await orderSession.delete(lineUserId);
 
-      // 4. 고객에게 주문 접수 완료 안내
+      // 4. 고객에게 주문 완료 + 결제정보 안내
       await line.reply(event.replyToken, [
         createTextMessage(
-          "✅ 訂單已成功送出\n\n" +
-            `您的訂單編號：\n${order.orderNumber}\n\n` +
-            "我們已收到您的訂購資料。\n\n" +
-            "Seoul Moment 工作人員確認商品、庫存及付款資訊後，" +
-            "將透過 LINE 與您聯絡。\n\n" +
-            "請保留您的訂單編號，以便後續查詢。\n\n" +
-            "感謝您的訂購 🤍",
+          "✅ 訂單已成立\n\n" +
+            "感謝您的訂購！您的訂單已成功送出。\n\n" +
+            `訂單編號\n${order.orderNumber}\n\n` +
+            "請保留您的訂單編號，並依照下方付款資訊完成匯款。\n\n" +
+            "款項確認完成後，我們將再透過 LINE 通知您。",
         ),
+        createPaymentInfoFlex(),
       ]);
 
       return true;

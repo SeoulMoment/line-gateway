@@ -1,4 +1,5 @@
 import { createOrderPlatformMenuFlex } from "../builders/flex/orderPlatformMenu";
+import { createPaymentInfoFlex } from "../builders/flex/paymentInfo";
 import { bestCommand } from "../commands/best";
 import { brandCommand } from "../commands/brand";
 import { deliveryCommand } from "../commands/delivery";
@@ -26,11 +27,18 @@ export async function postbackRouter(
   // 주문 시작
   if (data === "order:start") {
     await line.reply(event.replyToken, [createOrderPlatformMenuFlex()]);
-
     return;
   }
 
+  // 결제 정보
+  if (data === "payment:info") {
+    await line.reply(event.replyToken, [createPaymentInfoFlex()]);
+    return;
+  }
+
+  // 주문 관련 Postback
   const handled = await orderPostbackRouter(event, line, db, resendApiKey);
+
   if (handled) {
     return;
   }
