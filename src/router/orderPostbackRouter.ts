@@ -28,10 +28,11 @@ export async function orderPostbackRouter(
 
       await line.reply(event.replyToken, [
         createTextMessage(
-          "🛍️ LINE 訂購\n\n" +
-            "接下來將一步一步協助您完成商品訂購。\n\n" +
-            "① 請輸入訂購人姓名\n\n" +
-            "請填寫與匯款帳戶相同的真實姓名，以便我們確認付款。",
+          "ORDER · 訂購資訊\n" +
+            "訂購人姓名\n\n" +
+            "現在開始進行商品訂購。\n\n" +
+            "請輸入訂購人的真實姓名。\n\n" +
+            "請填寫與匯款帳戶相同的姓名，以便我們後續確認付款。",
         ),
       ]);
 
@@ -43,8 +44,10 @@ export async function orderPostbackRouter(
 
       await line.reply(event.replyToken, [
         createTextMessage(
-          "🛒 Shopee 訂單確認\n\n" +
-            "為了確認您的訂單身分，請輸入您的 Shopee 訂單編號。",
+          "ORDER · SHOPEE\n" +
+            "Shopee 訂單編號\n\n" +
+            "請輸入您的 Shopee 訂單編號。\n\n" +
+            "我們將透過訂單編號確認您的訂購資訊。",
         ),
       ]);
 
@@ -81,10 +84,12 @@ export async function orderPostbackRouter(
 
       await line.reply(event.replyToken, [
         createTextMessage(
-          "📍 取貨門市\n\n" +
-            "您已選擇：7-ELEVEN\n\n" +
-            "請輸入取貨門市名稱。\n\n" +
-            "例如：信義門市",
+          "ORDER · 取貨資訊\n" +
+            "取貨門市\n\n" +
+            "7-ELEVEN 已選擇 ✓\n\n" +
+            "請輸入您希望取貨的門市名稱。\n\n" +
+            "例如：信義門市\n\n" +
+            "請依照 7-ELEVEN 顯示的完整門市名稱填寫。",
         ),
       ]);
 
@@ -122,10 +127,12 @@ export async function orderPostbackRouter(
 
       await line.reply(event.replyToken, [
         createTextMessage(
-          "📍 取貨門市\n\n" +
-            "您已選擇：全家 FamilyMart\n\n" +
-            "請輸入取貨門市名稱。\n\n" +
-            "例如：台北信義店",
+          "ORDER · 取貨資訊\n" +
+            "取貨門市\n\n" +
+            "全家 FamilyMart 已選擇 ✓\n\n" +
+            "請輸入您希望取貨的門市名稱。\n\n" +
+            "例如：台北信義店\n\n" +
+            "請依照全家顯示的完整門市名稱填寫。",
         ),
       ]);
 
@@ -149,7 +156,10 @@ export async function orderPostbackRouter(
 
         await line.reply(event.replyToken, [
           createTextMessage(
-            "🔄 已重新開始填寫\n\n" + "請重新輸入您的 Shopee 訂單編號。",
+            "ORDER · 重新填寫\n" +
+              "Shopee 訂單編號\n\n" +
+              "已重新開始填寫 ✓\n\n" +
+              "請重新輸入您的 Shopee 訂單編號。",
           ),
         ]);
 
@@ -160,9 +170,11 @@ export async function orderPostbackRouter(
 
       await line.reply(event.replyToken, [
         createTextMessage(
-          "🔄 已重新開始填寫\n\n" +
-            "① 請輸入訂購人姓名。\n\n" +
-            "請填寫與匯款帳戶相同的真實姓名。",
+          "ORDER · 重新填寫\n" +
+            "訂購人姓名\n\n" +
+            "已重新開始填寫 ✓\n\n" +
+            "請輸入訂購人的真實姓名。\n\n" +
+            "請填寫與匯款帳戶相同的姓名，以便我們確認付款。",
         ),
       ]);
 
@@ -175,7 +187,9 @@ export async function orderPostbackRouter(
 
       await line.reply(event.replyToken, [
         createTextMessage(
-          "已取消本次訂購。\n\n" + "如需重新訂購，請再次點選「商品訂購」。",
+          "ORDER · 已取消\n\n" +
+            "本次訂購已取消。\n\n" +
+            "如需重新訂購，請再次點選「商品訂購」。",
         ),
       ]);
 
@@ -228,8 +242,9 @@ export async function orderPostbackRouter(
       // 4. 고객에게 주문 완료 + 결제정보 안내
       await line.reply(event.replyToken, [
         createTextMessage(
-          "✅ 訂單已成立\n\n" +
-            "感謝您的訂購！您的訂單已成功送出。\n\n" +
+          "ORDER · 訂購完成\n\n" +
+            "訂單已成立 ✓\n\n" +
+            "感謝您的訂購！我們已收到您的訂購資料。\n\n" +
             `訂單編號\n${order.orderNumber}\n\n` +
             "請保留您的訂單編號，並依照下方付款資訊完成匯款。\n\n" +
             "款項確認完成後，我們將再透過 LINE 通知您。",
