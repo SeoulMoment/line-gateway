@@ -1,5 +1,6 @@
 import { routeCommand } from "../router/commandRouter";
 import type { LineService } from "../services/line";
+import { SupportSessionService } from "../services/supportSession";
 import type { MessageEvent } from "../types/line/webhook";
 import { orderTextHandler } from "./orderTextHandler";
 
@@ -8,14 +9,27 @@ export async function textHandler(
   line: LineService,
   db: D1Database,
 ): Promise<void> {
-  // 현재 진행 중인 주문이 있는지 먼저 확인
+  // 1. 주문 진행 중인지 확인
   const handled = await orderTextHandler(event, line, db);
 
-  // 주문 입력으로 처리되었다면 일반 commandRouter로 보내지 않음
   if (handled) {
     return;
   }
 
-  // 주문 진행 중이 아니라면 기존 메시지 처리
-  await routeCommand(event, line);
+  // 2. 고객센터 상담 중인지 확인
+  const lineUserId = event.source.userId;
+
+  if (lineUserId) {
+    const support = new SupportSessionService(db);
+
+    const isActive = await support.isActive(lineUserId);
+
+    if (isActive) {
+      // 상담 중에는 Worker가 아무 응답도 하지 않음
+      return;
+    }
+  }
+
+  // 3. 일반 Command 처리
+  await routeCommand(event, line, db);
 }

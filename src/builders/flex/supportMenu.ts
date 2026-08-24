@@ -134,18 +134,24 @@ export function createSupportFlex(): FlexMessage {
       footer: {
         type: "box",
         layout: "vertical",
-        paddingAll: "16px",
-        paddingTop: "4px",
+        spacing: "sm",
         contents: [
           {
             type: "button",
             style: "primary",
-            height: "sm",
             color: "#111111",
             action: {
-              type: "uri",
-              label: "聯絡 Seoul Moment",
-              uri: "https://seoulmoment.com.tw/zh-TW/contact",
+              type: "postback",
+              label: "開始聊天",
+              data: "support:start",
+            },
+          },
+          {
+            type: "button",
+            action: {
+              type: "postback",
+              label: "返回",
+              data: "support:cancel",
             },
           },
         ],

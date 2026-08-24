@@ -27,6 +27,7 @@ const commandDefinitions: CommandDefinition[] = [
 export async function routeCommand(
   event: MessageEvent,
   line: LineService,
+  db: D1Database,
 ): Promise<void> {
   const message = event.message.text.trim();
 
@@ -37,6 +38,8 @@ export async function routeCommand(
   const context: CommandContext = {
     line,
     replyToken: event.replyToken,
+    db,
+    lineUserId: event.source.userId!,
   };
 
   if (!command) {
