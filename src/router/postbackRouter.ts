@@ -1,3 +1,4 @@
+import { createMemberAgreementFlex } from "../builders/flex/memberAgreement";
 import { createOrderPlatformMenuFlex } from "../builders/flex/orderPlatformMenu";
 import { createPaymentInfoFlex } from "../builders/flex/paymentInfo";
 import { createSupportCategoryFlex } from "../builders/flex/supportCategory";
@@ -10,10 +11,14 @@ import { newArrivalCommand } from "../commands/newArrival";
 import { orderCommand } from "../commands/order";
 import { supportCommand } from "../commands/support";
 import { SUPPORT_CATEGORY } from "../constants/support";
-import type { LineService } from "../services/line";
 import { SupportSessionService } from "../services/supportSession";
-import type { PostbackEvent } from "../types/line/webhook";
 import { orderPostbackRouter } from "./orderPostbackRouter";
+import { MemberSessionService } from "../services/memberSession";
+import { createEmailGuideFlex } from "../builders/flex/emailGuide";
+import { MEMBER_POSTBACK, MEMBER_STATE } from "../constants/member";
+
+import type { PostbackEvent } from "../types/line/webhook";
+import type { LineService } from "../services/line";
 
 export async function postbackRouter(
   event: PostbackEvent,
@@ -32,7 +37,8 @@ export async function postbackRouter(
 
   // 주문 시작
   if (data === "order:start") {
-    await line.reply(event.replyToken, [createOrderPlatformMenuFlex()]);
+    await line.reply(event.replyToken, [createMemberAgreementFlex()]);
+
     return;
   }
 
@@ -42,20 +48,19 @@ export async function postbackRouter(
     return;
   }
 
-  if (data === "payment:complete") {
-    await line.reply(event.replyToken, [
-      {
-        type: "text",
-        text:
-          "✓ 訂購完成\n\n" +
-          "感謝您的訂購！\n\n" +
-          "款項確認後，我們將透過 LINE 通知您。\n\n" +
-          "您可以隨時使用下方選單查看商品或聯絡客服。",
-      },
-    ]);
+  if (data === MEMBER_POSTBACK.AGREEMENT) {
+    const member = new MemberSessionService(db);
+
+    await member.update({
+      lineUserId: event.source.userId!,
+      state: MEMBER_STATE.WAIT_EMAIL,
+    });
+
+    await line.reply(event.replyToken, [createEmailGuideFlex()]);
 
     return;
   }
+
   if (data.startsWith("support:category:")) {
     const category = data.replace("support:category:", "");
     const categoryName =
@@ -74,6 +79,19 @@ export async function postbackRouter(
   // 고객센터 시작
   if (data === "support:start") {
     await line.reply(event.replyToken, [createSupportCategoryFlex()]);
+
+    return;
+  }
+
+  if (data === MEMBER_POSTBACK.AGREEMENT) {
+    const member = new MemberSessionService(db);
+
+    await member.update({
+      lineUserId: event.source.userId!,
+      state: MEMBER_STATE.WAIT_EMAIL,
+    });
+
+    await line.reply(event.replyToken, [createEmailGuideFlex()]);
 
     return;
   }

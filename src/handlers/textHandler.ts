@@ -1,22 +1,31 @@
+import { memberTextHandler } from "./memberTextHandler";
 import { routeCommand } from "../router/commandRouter";
-import type { LineService } from "../services/line";
 import { SupportSessionService } from "../services/supportSession";
-import type { MessageEvent } from "../types/line/webhook";
 import { orderTextHandler } from "./orderTextHandler";
+
+import type { MessageEvent } from "../types/line/webhook";
+import type { LineService } from "../services/line";
 
 export async function textHandler(
   event: MessageEvent,
   line: LineService,
   db: D1Database,
 ): Promise<void> {
-  // 1. 주문 진행 중인지 확인
+  // 1. 회원가입 진행 중인지 확인
+  const memberHandled = await memberTextHandler(event, line, db);
+
+  if (memberHandled) {
+    return;
+  }
+
+  // 2. 주문 진행 중인지 확인
   const handled = await orderTextHandler(event, line, db);
 
   if (handled) {
     return;
   }
 
-  // 2. 고객센터 상담 중인지 확인
+  // 3. 고객센터 상담 중인지 확인
   const lineUserId = event.source.userId;
 
   if (lineUserId) {
@@ -30,6 +39,6 @@ export async function textHandler(
     }
   }
 
-  // 3. 일반 Command 처리
+  // 4. 일반 Command 처리
   await routeCommand(event, line, db);
 }
