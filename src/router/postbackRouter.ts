@@ -1,24 +1,28 @@
+import { createEmailGuideFlex } from "../builders/flex/emailGuide";
 import { createMemberAgreementFlex } from "../builders/flex/memberAgreement";
-import { createOrderPlatformMenuFlex } from "../builders/flex/orderPlatformMenu";
 import { createPaymentInfoFlex } from "../builders/flex/paymentInfo";
 import { createSupportCategoryFlex } from "../builders/flex/supportCategory";
 import { createSupportChatFlex } from "../builders/flex/supportChat";
 import { createSupportEndConfirmFlex } from "../builders/flex/supportEndConfirm";
+
 import { bestCommand } from "../commands/best";
 import { brandCommand } from "../commands/brand";
 import { deliveryCommand } from "../commands/delivery";
 import { newArrivalCommand } from "../commands/newArrival";
 import { orderCommand } from "../commands/order";
 import { supportCommand } from "../commands/support";
-import { SUPPORT_CATEGORY } from "../constants/support";
-import { SupportSessionService } from "../services/supportSession";
-import { orderPostbackRouter } from "./orderPostbackRouter";
-import { MemberSessionService } from "../services/memberSession";
-import { createEmailGuideFlex } from "../builders/flex/emailGuide";
+
 import { MEMBER_POSTBACK, MEMBER_STATE } from "../constants/member";
+import { SUPPORT_CATEGORY } from "../constants/support";
+
+import { MemberSessionService } from "../services/memberSession";
+import type { LineService } from "../services/line";
+import { SupportSessionService } from "../services/supportSession";
+
+import { orderPostbackRouter } from "./orderPostbackRouter";
 
 import type { PostbackEvent } from "../types/line/webhook";
-import type { LineService } from "../services/line";
+import { createMemberAgreementDetailFlex } from "../builders/flex/memberAgreementDetail";
 
 export async function postbackRouter(
   event: PostbackEvent,
@@ -38,7 +42,6 @@ export async function postbackRouter(
   // 주문 시작
   if (data === "order:start") {
     await line.reply(event.replyToken, [createMemberAgreementFlex()]);
-
     return;
   }
 
@@ -48,8 +51,27 @@ export async function postbackRouter(
     return;
   }
 
+  if (data === "payment:complete") {
+    await line.reply(event.replyToken, [
+      {
+        type: "text",
+        text:
+          "✓ 訂購完成\n\n" +
+          "感謝您的訂購！\n\n" +
+          "款項確認後，我們將透過 LINE 通知您。\n\n" +
+          "您可以隨時使用下方選單查看商品或聯絡客服。",
+      },
+    ]);
+
+    return;
+  }
+
+  // Member Agreement
   if (data === MEMBER_POSTBACK.AGREEMENT) {
     const member = new MemberSessionService(db);
+
+    // TODO
+    // Check Member API
 
     await member.update({
       lineUserId: event.source.userId!,
@@ -61,8 +83,40 @@ export async function postbackRouter(
     return;
   }
 
+  if (data === MEMBER_POSTBACK.DETAIL) {
+    await line.reply(event.replyToken, [createMemberAgreementDetailFlex()]);
+
+    return;
+  }
+
+  if (data === MEMBER_POSTBACK.BACK) {
+    await line.reply(event.replyToken, [createMemberAgreementFlex()]);
+
+    return;
+  }
+
+  if (data === MEMBER_POSTBACK.CHANGE_EMAIL) {
+    const member = new MemberSessionService(db);
+
+    await member.update({
+      lineUserId: event.source.userId!,
+
+      state: MEMBER_STATE.WAIT_EMAIL,
+    });
+
+    await line.reply(
+      event.replyToken,
+
+      [createEmailGuideFlex()],
+    );
+
+    return;
+  }
+
+  // 고객센터 카테고리
   if (data.startsWith("support:category:")) {
     const category = data.replace("support:category:", "");
+
     const categoryName =
       SUPPORT_CATEGORY[category as keyof typeof SUPPORT_CATEGORY] ??
       SUPPORT_CATEGORY.OTHER;
@@ -79,23 +133,10 @@ export async function postbackRouter(
   // 고객센터 시작
   if (data === "support:start") {
     await line.reply(event.replyToken, [createSupportCategoryFlex()]);
-
     return;
   }
 
-  if (data === MEMBER_POSTBACK.AGREEMENT) {
-    const member = new MemberSessionService(db);
-
-    await member.update({
-      lineUserId: event.source.userId!,
-      state: MEMBER_STATE.WAIT_EMAIL,
-    });
-
-    await line.reply(event.replyToken, [createEmailGuideFlex()]);
-
-    return;
-  }
-
+  // 고객센터 종료
   if (data === "support:end") {
     const support = new SupportSessionService(db);
 
@@ -117,6 +158,7 @@ export async function postbackRouter(
     return;
   }
 
+  // 상담 계속
   if (data === "support:continue") {
     await line.reply(event.replyToken, [
       {
@@ -128,11 +170,13 @@ export async function postbackRouter(
     return;
   }
 
+  // 상담 종료 확인
   if (data === "support:confirm-end") {
     const support = new SupportSessionService(db);
 
     // TODO
-    // send support closed email
+    // Send Support Closed Email
+
     await support.deactivate(event.source.userId!);
 
     await line.reply(event.replyToken, [

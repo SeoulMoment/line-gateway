@@ -9,8 +9,10 @@ export type MemberState = (typeof MEMBER_STATE)[keyof typeof MEMBER_STATE];
 
 export const MEMBER_POSTBACK = {
   AGREEMENT: "member:agreement",
-  SEND_EMAIL: "member:send-email",
-  VERIFY: "member:verify",
+  DETAIL: "member:detail",
+  BACK: "member:back",
+  RESEND: "member:resend",
+  CHANGE_EMAIL: "member:change-email",
 } as const;
 
 export const MEMBER_REGEX = {
