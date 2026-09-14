@@ -65,15 +65,14 @@ export async function memberTextHandler(
         console.log("[Backend] sendEmailCode SUCCESS");
         console.log(result);
       } catch (error) {
-        console.error("[Backend] sendEmailCode ERROR");
-        console.error(error);
+        console.error("[Backend] sendEmailCode ERROR:", error);
+
+        const message = error instanceof Error ? error.message : String(error);
 
         await line.reply(event.replyToken, [
           {
             type: "text",
-            text:
-              "❌ Email 驗證碼發送失敗。\n\n" +
-              "請稍後再試一次，若問題持續發生請聯絡客服。",
+            text: "❌ Email 驗證碼發送失敗\n\n" + message,
           },
         ]);
 

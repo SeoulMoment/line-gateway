@@ -9,6 +9,11 @@ export class BackendApiService {
     path: string,
     body?: unknown,
   ): Promise<T> {
+    console.log("========== BACKEND API ==========");
+    console.log("METHOD:", method);
+    console.log("URL:", `${this.baseUrl}${path}`);
+    console.log("BODY:", body);
+
     const response = await fetch(`${this.baseUrl}${path}`, {
       method,
       headers: {
@@ -18,13 +23,19 @@ export class BackendApiService {
       body: body ? JSON.stringify(body) : undefined,
     });
 
-    if (!response.ok) {
-      const error = await response.text();
+    console.log("STATUS:", response.status);
 
-      throw new Error(`Backend API Error (${response.status})\n${error}`);
+    const responseText = await response.text();
+
+    console.log("RESPONSE:", responseText);
+
+    if (!response.ok) {
+      throw new Error(
+        `Backend API Error (${response.status})\n${responseText}`,
+      );
     }
 
-    return (await response.json()) as T;
+    return JSON.parse(responseText) as T;
   }
 
   async sendEmailCode(email: string) {
