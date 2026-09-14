@@ -30,7 +30,8 @@ export async function memberTextHandler(
 
   const session = await member.get(lineUserId);
 
-  if (!session) {
+  // 회원가입 진행 중이 아니면 OrderHandler에게 넘긴다.
+  if (!session || session.state === MEMBER_STATE.NONE) {
     return false;
   }
 
@@ -43,7 +44,6 @@ export async function memberTextHandler(
 
       // TODO(v1.0)
       // Send Email Verification API
-      // Enable WAIT_VERIFY Flow
 
       await member.update({
         lineUserId,
