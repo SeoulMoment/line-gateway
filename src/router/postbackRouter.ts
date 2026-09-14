@@ -72,12 +72,17 @@ export async function postbackRouter(
   }
 
   // 비회원 구매
+  // 비회원 구매
   if (data === MEMBER_POSTBACK.GUEST_ORDER) {
+    const member = new MemberSessionService(db);
+
+    // 회원가입 세션 제거
+    await member.clear(event.source.userId!);
+
     await line.reply(event.replyToken, [createOrderPlatformMenuFlex()]);
 
     return;
   }
-
   // 주문 취소
   if (data === MEMBER_POSTBACK.CANCEL_ORDER) {
     await line.reply(event.replyToken, [

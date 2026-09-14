@@ -13,11 +13,8 @@ export const LINE_API = {
 export const LINE_ENDPOINT = {
   REPLY: "/message/reply",
   PUSH: "/message/push",
-
   INFO: "/info",
-
   RICHMENU: "/richmenu",
-
   USER_PROFILE: "/profile",
 } as const;
 

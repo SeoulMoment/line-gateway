@@ -26,6 +26,7 @@ export async function orderPostbackRouter(
   switch (data) {
     // LINE 주문 시작
     case "order:platform:line":
+      console.log("LINE ORDER CLICKED");
       await orderSession.create(lineUserId, "line", "customerName");
 
       await line.reply(event.replyToken, [

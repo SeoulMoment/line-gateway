@@ -26,8 +26,17 @@ export async function orderTextHandler(
     return false;
   }
 
+  console.log("===== ORDER TEXT =====");
+  console.log("User:", lineUserId);
+  console.log("Text:", text);
+
   const orderSession = new OrderSessionService(db);
   const session = await orderSession.get(lineUserId);
+
+  console.log("========== ORDER TEXT ==========");
+  console.log("USER :", lineUserId);
+  console.log("TEXT :", text);
+  console.log("SESSION :", session);
 
   if (!session) {
     return false;
@@ -36,6 +45,7 @@ export async function orderTextHandler(
   switch (session.step) {
     // Shopee 주문번호
     case "externalOrderId":
+      console.log("CURRENT STEP :", session.step);
       await orderSession.updateField(
         lineUserId,
         "external_order_id",

@@ -1,4 +1,5 @@
 import { routeCommand } from "../router/commandRouter";
+import { BackendApiService } from "../services/backendApi";
 import type { LineService } from "../services/line";
 import { SupportSessionService } from "../services/supportSession";
 import type { MessageEvent } from "../types/line/webhook";
@@ -9,22 +10,20 @@ export async function textHandler(
   event: MessageEvent,
   line: LineService,
   db: D1Database,
+  backendApi: BackendApiService,
 ): Promise<void> {
-  // 1. 회원가입 진행 중인지 확인
-  const memberHandled = await memberTextHandler(event, line, db);
+  const memberHandled = await memberTextHandler(event, line, db, backendApi);
 
   if (memberHandled) {
     return;
   }
 
-  // 2. 주문 진행 중인지 확인
   const handled = await orderTextHandler(event, line, db);
 
   if (handled) {
     return;
   }
 
-  // 3. 고객센터 상담 중인지 확인
   const lineUserId = event.source.userId;
 
   if (lineUserId) {
@@ -33,11 +32,9 @@ export async function textHandler(
     const isActive = await support.isActive(lineUserId);
 
     if (isActive) {
-      // 상담 중에는 Worker가 아무 응답도 하지 않음
       return;
     }
   }
 
-  // 4. 일반 Command 처리
   await routeCommand(event, line, db);
 }
