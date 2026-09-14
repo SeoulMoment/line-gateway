@@ -1,28 +1,25 @@
 import { createEmailGuideFlex } from "../builders/flex/emailGuide";
 import { createMemberAgreementFlex } from "../builders/flex/memberAgreement";
+import { createMemberAgreementDetailFlex } from "../builders/flex/memberAgreementDetail";
+import { createOrderPlatformMenuFlex } from "../builders/flex/orderPlatformMenu";
 import { createPaymentInfoFlex } from "../builders/flex/paymentInfo";
+import { createPurchaseTypeFlex } from "../builders/flex/purchaseType";
 import { createSupportCategoryFlex } from "../builders/flex/supportCategory";
 import { createSupportChatFlex } from "../builders/flex/supportChat";
 import { createSupportEndConfirmFlex } from "../builders/flex/supportEndConfirm";
-
 import { bestCommand } from "../commands/best";
 import { brandCommand } from "../commands/brand";
 import { deliveryCommand } from "../commands/delivery";
 import { newArrivalCommand } from "../commands/newArrival";
 import { orderCommand } from "../commands/order";
 import { supportCommand } from "../commands/support";
-
 import { MEMBER_POSTBACK, MEMBER_STATE } from "../constants/member";
 import { SUPPORT_CATEGORY } from "../constants/support";
-
-import { MemberSessionService } from "../services/memberSession";
 import type { LineService } from "../services/line";
+import { MemberSessionService } from "../services/memberSession";
 import { SupportSessionService } from "../services/supportSession";
-
-import { orderPostbackRouter } from "./orderPostbackRouter";
-
 import type { PostbackEvent } from "../types/line/webhook";
-import { createMemberAgreementDetailFlex } from "../builders/flex/memberAgreementDetail";
+import { orderPostbackRouter } from "./orderPostbackRouter";
 
 export async function postbackRouter(
   event: PostbackEvent,
@@ -41,7 +38,8 @@ export async function postbackRouter(
 
   // 주문 시작
   if (data === "order:start") {
-    await line.reply(event.replyToken, [createMemberAgreementFlex()]);
+    await line.reply(event.replyToken, [createPurchaseTypeFlex()]);
+
     return;
   }
 
@@ -60,6 +58,32 @@ export async function postbackRouter(
           "感謝您的訂購！\n\n" +
           "款項確認後，我們將透過 LINE 通知您。\n\n" +
           "您可以隨時使用下方選單查看商品或聯絡客服。",
+      },
+    ]);
+
+    return;
+  }
+
+  // 회원 구매
+  if (data === MEMBER_POSTBACK.MEMBER_ORDER) {
+    await line.reply(event.replyToken, [createMemberAgreementFlex()]);
+
+    return;
+  }
+
+  // 비회원 구매
+  if (data === MEMBER_POSTBACK.GUEST_ORDER) {
+    await line.reply(event.replyToken, [createOrderPlatformMenuFlex()]);
+
+    return;
+  }
+
+  // 주문 취소
+  if (data === MEMBER_POSTBACK.CANCEL_ORDER) {
+    await line.reply(event.replyToken, [
+      {
+        type: "text",
+        text: "已取消本次商品購買，如有需要歡迎再次使用 Seoul Moment 😊",
       },
     ]);
 

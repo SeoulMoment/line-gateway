@@ -1,5 +1,5 @@
-import type { FlexMessage } from "../../types/line";
 import { MEMBER_POSTBACK } from "../../constants/member";
+import type { FlexMessage } from "../../types/line";
 
 export function createMemberAgreementDetailFlex(): FlexMessage {
   return {
