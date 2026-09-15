@@ -14,7 +14,6 @@ export async function memberTextHandler(
   const lineUserId = event.source.userId;
 
   if (!lineUserId) {
-    console.log("[Member] No Line User ID");
     return false;
   }
 
@@ -29,91 +28,161 @@ export async function memberTextHandler(
   }
 
   const member = new MemberSessionService(db);
-
   const session = await member.get(lineUserId);
 
-  console.log("[Member] Session:", session);
-
-  // 회원가입 진행 중이 아니면 주문 Handler로 넘김
   if (!session || session.state === MEMBER_STATE.NONE) {
-    console.log("[Member] Session not found or NONE");
     return false;
   }
 
-  console.log("[Member] Current State:", session.state);
-
   switch (session.state) {
+    /**
+     * 이메일 입력 단계
+     */
     case MEMBER_STATE.WAIT_EMAIL: {
-      console.log("[Member] WAIT_EMAIL");
-
-      // 이메일 형식 체크
       if (!MEMBER_REGEX.EMAIL.test(text)) {
-        console.log("[Member] Invalid Email:", text);
-
         await line.reply(event.replyToken, [createEmailGuideFlex()]);
         return true;
       }
 
-      console.log("[Member] Valid Email:", text);
-
-      // 이메일 인증코드 발송
       try {
-        console.log("[Backend] sendEmailCode START");
-
-        const result = await backendApi.sendEmailCode(text);
-
-        console.log("[Backend] sendEmailCode SUCCESS");
-        console.log(result);
+        await backendApi.sendLineBotEmailCode(lineUserId, text);
       } catch (error) {
-        console.error("[Backend] sendEmailCode ERROR:", error);
+        console.error("[Member] Email code error:", error);
 
         const message = error instanceof Error ? error.message : String(error);
+
+        if (message.includes("(401)")) {
+          await line.reply(event.replyToken, [
+            {
+              type: "text",
+              text:
+                "❌ 會員 Email 不一致\n\n" +
+                "請確認您輸入的是 Seoul Moment 會員帳號所使用的 Email。",
+            },
+          ]);
+          return true;
+        }
+
+        if (message.includes("(404)")) {
+          await line.reply(event.replyToken, [
+            {
+              type: "text",
+              text:
+                "❌ 找不到已連結的會員帳號\n\n" +
+                "請確認您的 LINE 帳號是否已與 Seoul Moment 會員連結。",
+            },
+          ]);
+          return true;
+        }
 
         await line.reply(event.replyToken, [
           {
             type: "text",
-            text: "❌ Email 驗證碼發送失敗\n\n" + message,
+            text:
+              "❌ 驗證碼發送失敗\n\n" + "系統暫時無法發送驗證碼，請稍後再試。",
           },
         ]);
 
         return true;
       }
 
-      console.log("[Member] Update Session -> WAIT_VERIFY");
-
       await member.update({
         lineUserId,
-        email: text,
         state: MEMBER_STATE.WAIT_VERIFY,
       });
 
-      console.log("[Member] Reply Verify Message");
-
       await line.reply(event.replyToken, [
         {
           type: "text",
-          text: "📧 驗證碼已寄出！\n\n" + "請輸入 Email 收到的 6 位數驗證碼。",
+          text:
+            "📧 驗證碼已寄出！\n\n" +
+            "請輸入 Email 收到的 6 位數驗證碼。\n" +
+            "驗證碼有效時間為 5 分鐘。",
         },
       ]);
 
       return true;
     }
 
+    /**
+     * 인증번호 입력 단계
+     */
     case MEMBER_STATE.WAIT_VERIFY: {
-      console.log("[Member] WAIT_VERIFY");
+      if (!MEMBER_REGEX.CODE.test(text)) {
+        await line.reply(event.replyToken, [
+          {
+            type: "text",
+            text: "請輸入 Email 收到的 6 位數驗證碼。",
+          },
+        ]);
+        return true;
+      }
 
-      await line.reply(event.replyToken, [
-        {
-          type: "text",
-          text: "🚧 Email 驗證 API 開發中。",
-        },
-      ]);
+      try {
+        const result = await backendApi.verifyLineBotEmail(lineUserId, text);
 
-      return true;
+        console.log("[Member] Verify success:", {
+          lineUserId,
+          userId: result.userId,
+          email: result.email,
+          nickname: result.nickname,
+        });
+
+        /**
+         * 다음 단계에서 여기에서
+         * lineUserId ↔ userId 매핑을 D1에 저장한다.
+         */
+
+        await member.clear(lineUserId);
+
+        await line.reply(event.replyToken, [
+          {
+            type: "text",
+            text:
+              `✅ Email 驗證成功！\n\n` +
+              `歡迎 ${result.nickname || "會員"}！\n` +
+              `即將開始會員訂購流程。`,
+          },
+        ]);
+
+        return true;
+      } catch (error) {
+        console.error("[Member] Email verify error:", error);
+
+        const message = error instanceof Error ? error.message : String(error);
+
+        if (message.includes("(401)")) {
+          await line.reply(event.replyToken, [
+            {
+              type: "text",
+              text: "❌ 驗證碼錯誤或已過期\n\n" + "請確認驗證碼後重新輸入。",
+            },
+          ]);
+          return true;
+        }
+
+        if (message.includes("(404)")) {
+          await line.reply(event.replyToken, [
+            {
+              type: "text",
+              text: "❌ 找不到已連結的會員帳號\n\n" + "請重新進行會員驗證。",
+            },
+          ]);
+          return true;
+        }
+
+        await line.reply(event.replyToken, [
+          {
+            type: "text",
+            text: "❌ 驗證失敗\n\n系統暫時發生錯誤，請稍後再試。",
+          },
+        ]);
+
+        return true;
+      }
     }
 
     default:
-      console.log("[Member] Unknown State:", session.state);
       return false;
   }
 }

@@ -63,26 +63,47 @@ export async function postbackRouter(
 
     return;
   }
-
   // 회원 구매
   if (data === MEMBER_POSTBACK.MEMBER_ORDER) {
     await line.reply(event.replyToken, [createMemberAgreementFlex()]);
-
     return;
   }
 
-  // 비회원 구매
+  // 회원 약관 동의
+  if (data === MEMBER_POSTBACK.AGREEMENT) {
+    const member = new MemberSessionService(db);
+
+    await member.update({
+      lineUserId: event.source.userId!,
+      state: MEMBER_STATE.WAIT_EMAIL,
+    });
+
+    await line.reply(event.replyToken, [createEmailGuideFlex()]);
+    return;
+  }
+
+  // 회원 약관 상세보기
+  if (data === MEMBER_POSTBACK.DETAIL) {
+    await line.reply(event.replyToken, [createMemberAgreementDetailFlex()]);
+    return;
+  }
+
+  // 약관 상세 → 뒤로가기
+  if (data === MEMBER_POSTBACK.BACK) {
+    await line.reply(event.replyToken, [createMemberAgreementFlex()]);
+    return;
+  }
+
   // 비회원 구매
   if (data === MEMBER_POSTBACK.GUEST_ORDER) {
     const member = new MemberSessionService(db);
 
-    // 회원가입 세션 제거
     await member.clear(event.source.userId!);
 
     await line.reply(event.replyToken, [createOrderPlatformMenuFlex()]);
-
     return;
   }
+
   // 주문 취소
   if (data === MEMBER_POSTBACK.CANCEL_ORDER) {
     await line.reply(event.replyToken, [
@@ -91,53 +112,6 @@ export async function postbackRouter(
         text: "已取消本次商品購買，如有需要歡迎再次使用 Seoul Moment 😊",
       },
     ]);
-
-    return;
-  }
-
-  // Member Agreement
-  if (data === MEMBER_POSTBACK.AGREEMENT) {
-    const member = new MemberSessionService(db);
-
-    // TODO
-    // Check Member API
-
-    await member.update({
-      lineUserId: event.source.userId!,
-      state: MEMBER_STATE.WAIT_EMAIL,
-    });
-
-    await line.reply(event.replyToken, [createEmailGuideFlex()]);
-
-    return;
-  }
-
-  if (data === MEMBER_POSTBACK.DETAIL) {
-    await line.reply(event.replyToken, [createMemberAgreementDetailFlex()]);
-
-    return;
-  }
-
-  if (data === MEMBER_POSTBACK.BACK) {
-    await line.reply(event.replyToken, [createMemberAgreementFlex()]);
-
-    return;
-  }
-
-  if (data === MEMBER_POSTBACK.CHANGE_EMAIL) {
-    const member = new MemberSessionService(db);
-
-    await member.update({
-      lineUserId: event.source.userId!,
-
-      state: MEMBER_STATE.WAIT_EMAIL,
-    });
-
-    await line.reply(
-      event.replyToken,
-
-      [createEmailGuideFlex()],
-    );
 
     return;
   }

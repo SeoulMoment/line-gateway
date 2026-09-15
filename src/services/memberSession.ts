@@ -10,7 +10,6 @@ interface MemberRow {
 interface UpdateMemberSession {
   lineUserId: string;
   state: MemberState;
-  email?: string | null;
 }
 
 export class MemberSessionService {
@@ -39,7 +38,7 @@ export class MemberSessionService {
     };
   }
 
-  async update({ lineUserId, state, email = null }: UpdateMemberSession) {
+  async update({ lineUserId, state }: UpdateMemberSession) {
     await this.db
       .prepare(
         `
@@ -61,7 +60,7 @@ export class MemberSessionService {
           updated_at = CURRENT_TIMESTAMP
       `,
       )
-      .bind(lineUserId, state, email)
+      .bind(lineUserId, state)
       .run();
   }
 
