@@ -22,7 +22,7 @@ export class MemberSessionService {
         SELECT *
         FROM member_sessions
         WHERE line_user_id = ?
-      `,
+        `,
       )
       .bind(lineUserId)
       .first<MemberRow>();
@@ -38,39 +38,33 @@ export class MemberSessionService {
     };
   }
 
-  async update({ lineUserId, state }: UpdateMemberSession) {
+  async update({ lineUserId, state }: UpdateMemberSession): Promise<void> {
     await this.db
       .prepare(
         `
-        INSERT INTO member_sessions
-        (
+        INSERT INTO member_sessions (
           line_user_id,
-          state,
-          email
+          state
         )
-
-        VALUES (?, ?, ?)
+        VALUES (?, ?)
 
         ON CONFLICT(line_user_id)
-
         DO UPDATE SET
-
           state = excluded.state,
-          email = excluded.email,
           updated_at = CURRENT_TIMESTAMP
-      `,
+        `,
       )
       .bind(lineUserId, state)
       .run();
   }
 
-  async clear(lineUserId: string) {
+  async clear(lineUserId: string): Promise<void> {
     await this.db
       .prepare(
         `
         DELETE FROM member_sessions
         WHERE line_user_id = ?
-      `,
+        `,
       )
       .bind(lineUserId)
       .run();
