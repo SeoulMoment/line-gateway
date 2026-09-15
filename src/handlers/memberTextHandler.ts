@@ -1,4 +1,5 @@
 import { createEmailGuideFlex } from "../builders/flex/emailGuide";
+import { createMemberNotFoundFlex } from "../builders/flex/memberNotFound";
 import { MEMBER_REGEX, MEMBER_STATE } from "../constants/member";
 import { BackendApiService } from "../services/backendApi";
 import type { LineService } from "../services/line";
@@ -64,14 +65,7 @@ export async function memberTextHandler(
         }
 
         if (message.includes("(404)")) {
-          await line.reply(event.replyToken, [
-            {
-              type: "text",
-              text:
-                "❌ 找不到已連結的會員帳號\n\n" +
-                "請確認您的 LINE 帳號是否已與 Seoul Moment 會員連結。",
-            },
-          ]);
+          await line.reply(event.replyToken, [createMemberNotFoundFlex()]);
           return true;
         }
 
